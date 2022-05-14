@@ -19,6 +19,7 @@ public class PlayerStateMachine : MonoBehaviour
     Rigidbody2D _rb;
     Vector2 _movementInputValue;
     //Movement Variables
+    float _dashSpeed;
 
 
     //Getters & Setters
@@ -32,6 +33,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     public Vector2 MovementInputValue {get{return _movementInputValue;}}
 
+    public float DashSpeed {get{return _dashSpeed;} set{_dashSpeed = value;}}
     private void Awake() 
     {
         //Setup State
