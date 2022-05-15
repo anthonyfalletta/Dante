@@ -42,6 +42,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     void PerformMovement()
     {
+        
         //Debug.Log("Performing MOVE state");
         Ctx.Rb.velocity = Ctx.MovementInputValue.normalized * 25f * Time.deltaTime;
         //playerAbilitiesAnimations.HandleMoveAnimation(movementValue.normalized);
