@@ -17,23 +17,12 @@ public class ProjectileHeldState : ProjectileBaseState
     }
     public override void ExitState(){}
     public override void InitializeSubState(){}
-    public override void CheckSwitchStates(){
-        /*
-        if (Ctx.IsMovePressed)
-        {
-            SwitchState(Factory.Move());
-        }
-        else if (Ctx.IsShootPressed){
-            SwitchState(Factory.Shoot());
-        }
-        else if (Ctx.IsAttackPressed){
-            SwitchState(Factory.Attack());
-        }
-        */
-    }
+    public override void CheckSwitchStates(){}
 
     void StartHeld()
     {
-        
+        Ctx.ShootingPos = Vector2.zero;
+        Ctx.ShootingDistance = 0;
+        SwitchState(Factory.Charge());
     }
 }

@@ -13,8 +13,10 @@ public class PlayerShootState : PlayerBaseState
         StartShoot();
     }
     public override void UpdateState(){
+        /*
         Ctx.RaycastPos =  new Vector2(Ctx.Rb.transform.position.x,Ctx.Rb.transform.position.y) + (Ctx.ShootingPos * Ctx.ShootingDistance);
-        PerformShoot();   
+        PerformShoot(); 
+        */  
         CheckSwitchStates();
     }
     public override void ExitState(){
@@ -25,24 +27,17 @@ public class PlayerShootState : PlayerBaseState
         if (!Ctx.IsShootPressed){
             SwitchState(Factory.Idle());
         }
-        //////***********************
-        // else if (!Ctx.IsShootPressed && )
-        // {
-
-        // }
     }
 
     void StartShoot()
     {
-        //Debug.Log("Player enter SHOOT state");
-        Ctx.ShootingPos = Vector2.zero;
-        Ctx.ShootingDistance = 0;
         Ctx.InstantiateProjectile();
     }
 
     //***Implement Fixed Update
     void PerformShoot()
     {
+        /*
         //Debug.Log("Player enter SHOOT state");
         if (Ctx.ShootingDistance <= 2.0f)
         {
@@ -51,6 +46,7 @@ public class PlayerShootState : PlayerBaseState
         
         RaycastingShootingPostion();
         ProjectileSphereMovement();
+        */
     }
 
     private void ExitShoot()

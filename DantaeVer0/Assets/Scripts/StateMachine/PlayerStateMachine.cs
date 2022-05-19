@@ -125,6 +125,6 @@ public class PlayerStateMachine : MonoBehaviour
     public void InstantiateProjectile()
     {
         _projectileGO = Instantiate(_projectilePrefab, transform.position, transform.rotation);
-        _projectileRB = _projectileGO.GetComponent<Rigidbody2D>();
+        //_projectileRB = _projectileGO.GetComponent<Rigidbody2D>();
     }
 }
