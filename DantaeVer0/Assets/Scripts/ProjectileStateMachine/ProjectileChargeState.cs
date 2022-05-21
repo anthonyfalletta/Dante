@@ -13,8 +13,11 @@ public class ProjectileChargeState : ProjectileBaseState
         StartCharge();
     }
     public override void UpdateState(){
-        PerformCharge();
         CheckSwitchStates();
+    }
+
+    public override void FixedUpdateState(){
+        PerformCharge();
     }
     public override void ExitState(){}
     public override void InitializeSubState(){}
@@ -24,8 +27,6 @@ public class ProjectileChargeState : ProjectileBaseState
        if (!Ctx.IsShootPressed){
            if (Vector3.Distance(Ctx.PlayerGO.transform.position, Ctx.RaycastPos) > 1.0f)
             {        
-                //playerProjectileBehavior.SetTarget(raycastPosition);  
-                //playerProjectileBehavior.SetPlayerTarget(gameObject.transform.position);
                 Ctx.TargetPos = Ctx.RaycastPos;
                 SwitchState(Factory.Target());
             } 
@@ -45,7 +46,6 @@ public class ProjectileChargeState : ProjectileBaseState
 
     void PerformCharge()
     {
-        //Debug.Log("Player enter SHOOT state");
         if (Ctx.ShootingDistance <= 2.0f)
         {
             Ctx.ShootingDistance += 1.25f * Time.deltaTime;
@@ -68,7 +68,8 @@ public class ProjectileChargeState : ProjectileBaseState
             if (Ctx.RaycastHit2D.collider == true)
             {
                 //Debug.Log("Contact");
-                //shootingDistance = raycastHit2D.distance;                       
+                //***Used to only raycast up to target
+                //*shootingDistance = raycastHit2D.distance;                       
             }
             else 
             {

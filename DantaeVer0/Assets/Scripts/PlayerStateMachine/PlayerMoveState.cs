@@ -14,8 +14,11 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void UpdateState(){
         HandleMoveAnimation();
-        PerformMovement();
         CheckSwitchStates();  
+    }
+
+    public override void FixedUpdateState(){
+        PerformMovement();
     }
     public override void ExitState(){
         Ctx.PlayerRb.velocity = Vector2.zero;

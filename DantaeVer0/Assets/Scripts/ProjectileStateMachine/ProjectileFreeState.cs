@@ -16,6 +16,8 @@ public class ProjectileFreeState : ProjectileBaseState
         PerformFree();
         CheckSwitchStates();
     }
+
+    public override void FixedUpdateState(){}
     public override void ExitState(){}
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){

@@ -13,20 +13,23 @@ public class ProjectileSpecialState : ProjectileBaseState
         StartSpecial();
     }
     public override void UpdateState(){
-        PerformSpecial();
         CheckSwitchStates();
+    }
+
+    public override void FixedUpdateState(){
+        PerformSpecial();
     }
     public override void ExitState(){}
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        if (!Ctx.IsSpecialPressed){
+        if (!Ctx.IsSpecialPressed && Ctx.IsCollision == null){
             SwitchState(Factory.Free());
         }
     }
 
     void StartSpecial()
     {
-        //Wait for some time with Coroutine to start special (return process) 
+        //*Wait for some time with Coroutine to start special (return process) 
         Ctx.SpecialWait = true;  
         Ctx.StartCoroutine(SpecialWaitToStart());    
     }
@@ -35,15 +38,16 @@ public class ProjectileSpecialState : ProjectileBaseState
     {
         if (Ctx.SpecialWait == false)
         {
-            Debug.Log("Returning & Switching State");
-            Debug.Log("Switched States");
-             if (Ctx.IsCollider == null)
+            if (Ctx.IsCollision == null)
             {
-                Ctx.ProjectileGO.transform.position = Vector2.MoveTowards(Ctx.ProjectileGO.transform.position, Ctx.PlayerGO.transform.position, 0.5f*Time.deltaTime);      
-            }
-            else if (Ctx.IsCollider != null)
-            {
-                Ctx.ProjectileDestroy();
+                if (Ctx.IsCollider == null)
+                {
+                    Ctx.ProjectileGO.transform.position = Vector2.MoveTowards(Ctx.ProjectileGO.transform.position, Ctx.PlayerGO.transform.position, 0.5f*Time.deltaTime);      
+                }
+                else if (Ctx.IsCollider != null)
+                {
+                    Ctx.ProjectileDestroy();
+                }
             }
         }
     }

@@ -15,6 +15,9 @@ public class ProjectileHeldState : ProjectileBaseState
     public override void UpdateState(){
         CheckSwitchStates();
     }
+
+    public override void FixedUpdateState(){}
+
     public override void ExitState(){
    
     }

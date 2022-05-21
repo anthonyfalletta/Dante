@@ -16,6 +16,7 @@
     }
     public abstract void EnterState();
     public abstract void UpdateState();
+    public abstract void FixedUpdateState();
     public abstract void ExitState();
     public abstract void CheckSwitchStates();
     public abstract void InitializeSubState();
@@ -25,6 +26,15 @@
         if (_currentSubState != null)
         {
             _currentSubState.UpdateStates();
+        }
+    }
+
+    public void FixedUpdateStates()
+    {
+        FixedUpdateState();
+        if (_currentSubState != null)
+        {
+            _currentSubState.FixedUpdateStates();
         }
     }
 

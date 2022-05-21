@@ -15,6 +15,7 @@ public class ProjectileStateMachine : MonoBehaviour
     //Abilities Variables
     bool _isShootPressed;
     bool _isSpecialPressed;
+    bool _isSpecialActive;
 
     //Projectile Variables
     GameObject _projectilePrefab;
@@ -44,6 +45,8 @@ public class ProjectileStateMachine : MonoBehaviour
     public ProjectileBaseState CurrentState{get{return _currentState;} set{_currentState = value;}}
     public bool IsShootPressed {get{return _isShootPressed;} set{_isShootPressed = value;}}
     public bool IsSpecialPressed {get{return _isSpecialPressed;} set{_isSpecialPressed = value;}}
+    public bool IsSpecialActive {get{return _isSpecialActive;} set{_isSpecialActive = value;}}
+
 
     public Rigidbody2D ProjectileRb {get{return _projectileRb;} set{_projectileRb = value;}}
     public GameObject ProjectileGO {get{return _projectileGO;} set{_projectileGO = value;}}
@@ -96,7 +99,10 @@ public class ProjectileStateMachine : MonoBehaviour
         UpdateInputs();
         _currentState.UpdateStates();
         Debug.Log("Current Projectile State: " + _currentState);
-        Debug.Log("Collider: " + _isCollider);
+    }
+
+    void FixedUpdate() {
+        _currentState.FixedUpdateStates();
     }
 
     public void UpdateInputs()

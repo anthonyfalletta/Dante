@@ -14,6 +14,10 @@ public class PlayerDashState : PlayerBaseState
     }
     public override void UpdateState(){
         CheckSwitchStates();
+        
+    }
+
+    public override void FixedUpdateState(){
         PerformDash();
     }
     public override void ExitState(){}

@@ -15,6 +15,7 @@ public class PlayerStateMachine : MonoBehaviour
     bool _isShootPressed;
     bool _isAttackPressed;
     bool _isSpecialPressed;
+    bool _isSpecialActive;
     
     //Player Variable
     Rigidbody2D _playerRb;
@@ -41,6 +42,7 @@ public class PlayerStateMachine : MonoBehaviour
     public bool IsShootPressed {get{return _isShootPressed;} set{_isShootPressed = value;}}
     public bool IsAttackPressed {get{return _isAttackPressed;} set{_isAttackPressed = value;}}
     public bool IsSpecialPressed {get{return _isSpecialPressed;} set{_isSpecialPressed = value;}}
+
 
     public Rigidbody2D PlayerRb {get{return _playerRb;} set{_playerRb = value;}}
     public GameObject PlayerGO {get{return _playerGO;} set{_playerGO = value;}}
@@ -80,6 +82,7 @@ public class PlayerStateMachine : MonoBehaviour
     {
         _projectilePrefab = (GameObject)Resources.Load("Projectile");
         _attackPrefab = (GameObject)Resources.Load("AttackSwipeField");
+        _lastMovementInputValue = new Vector2(0,-1);
 
     }
 
@@ -90,11 +93,15 @@ public class PlayerStateMachine : MonoBehaviour
         Debug.Log("Current State: " + _currentState);
     }
 
+    void FixedUpdate() {
+        _currentState.FixedUpdateStates();
+    }
 
     public void OnMoveButton(InputAction.CallbackContext context)
     {
         _movementInputValue = context.ReadValue<Vector2>();
         _isMovePressed = _movementInputValue.magnitude != 0;
+
         if (_movementInputValue != Vector2.zero)
         {
             _lastMovementInputValue = _movementInputValue;
@@ -123,15 +130,20 @@ public class PlayerStateMachine : MonoBehaviour
     }
 
 
-    public void CreateAttackGameObject(Vector3 position, Quaternion rotation)
+    public void InstantiateAttackGameObject()
     {
-        Debug.Log("CreateAttackObjectScript Running");
-        Instantiate(_attackPrefab, position,rotation);
+        float angle = Mathf.Atan2(_lastMovementInputValue.normalized.y,_lastMovementInputValue.normalized.x) * Mathf.Rad2Deg;
+        Quaternion playerRot = Quaternion.Euler(0,0,angle);
+        Vector3 playerPos = _playerGO.transform.position + (new Vector3(_lastMovementInputValue.x,_lastMovementInputValue.y,0).normalized * 0.1f);
+        Instantiate(_attackPrefab, playerPos, playerRot);
     }
 
         
     public void InstantiateProjectile()
     {
-        Instantiate(_projectilePrefab, _playerGO.transform.position, _playerGO.transform.rotation);
+        float angle = Mathf.Atan2(_lastMovementInputValue.normalized.y,_lastMovementInputValue.normalized.x) * Mathf.Rad2Deg;
+        Quaternion playerRot = Quaternion.Euler(0,0,angle);
+        Vector3 playerPos = _playerGO.transform.position + (new Vector3(-_lastMovementInputValue.x,-_lastMovementInputValue.y,0).normalized * 0.1f);
+        Instantiate(_projectilePrefab, playerPos, playerRot);
     }
 }

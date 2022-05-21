@@ -15,6 +15,8 @@ public class PlayerShootState : PlayerBaseState
     public override void UpdateState(){
         CheckSwitchStates();
     }
+
+    public override void FixedUpdateState(){}
     public override void ExitState(){
         
     }
