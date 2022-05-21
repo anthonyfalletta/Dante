@@ -28,5 +28,9 @@ public class PlayerStateFactory
    {
        return new PlayerAttackState(_context, this);
    }
+   public PlayerBaseState Special()
+   {
+       return new PlayerSpecialState(_context, this);
+   }
 
 }

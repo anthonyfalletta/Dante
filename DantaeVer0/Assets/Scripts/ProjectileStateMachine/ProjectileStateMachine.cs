@@ -1,20 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
+
 
 public class ProjectileStateMachine : MonoBehaviour
 {
+    ProjectileInputs projectileInputs;
+
+
     //State Variables
     ProjectileBaseState _currentState;
     ProjectileStateFactory _states;
 
     //Abilities Variables
     bool _isShootPressed;
+    bool _isSpecialPressed;
 
     //Projectile Variables
-    Rigidbody2D _rb;
-    GameObject _GO;
+    GameObject _projectilePrefab;
+    Rigidbody2D _projectileRb;
+    GameObject _projectileGO;
+
+    //Player Variables
+    Rigidbody2D _playerRb;
+    GameObject _playerGO;
 
     Vector2 _movementInputValue;
 
@@ -24,12 +33,24 @@ public class ProjectileStateMachine : MonoBehaviour
     LayerMask _playerLayerMask;
     Vector3 _raycastPos;
 
+
+    Collision2D _isCollision;
+    Collider2D _isCollider;
+    Vector3 _targetPos;
+
+    bool _specialWait;
+
     //Getters & Setters
     public ProjectileBaseState CurrentState{get{return _currentState;} set{_currentState = value;}}
     public bool IsShootPressed {get{return _isShootPressed;} set{_isShootPressed = value;}}
+    public bool IsSpecialPressed {get{return _isSpecialPressed;} set{_isSpecialPressed = value;}}
 
-    public Rigidbody2D Rb {get{return _rb;} set{_rb = value;}}
-    public GameObject GO {get{return _GO;} set{_GO = value;}}
+    public Rigidbody2D ProjectileRb {get{return _projectileRb;} set{_projectileRb = value;}}
+    public GameObject ProjectileGO {get{return _projectileGO;} set{_projectileGO = value;}}
+    public GameObject ProjectilePrefab {get{return _projectilePrefab;} set{_projectilePrefab = value;}}
+
+    public Rigidbody2D PlayerRb {get{return _playerRb;} set{_playerRb = value;}}
+    public GameObject PlayerGO {get{return _playerGO;} set{_playerGO = value;}}
 
     public Vector2 MovementInputValue {get{return _movementInputValue;}}
 
@@ -40,45 +61,66 @@ public class ProjectileStateMachine : MonoBehaviour
     public Vector3 RaycastPos {get{return _raycastPos;} set{_raycastPos = new Vector3(value.x,value.y,value.z);}}
 
     
+    public Collision2D IsCollision{get{return _isCollision;} set{_isCollision = value;}}
+    public Collider2D IsCollider{get{return _isCollider;} set{_isCollider = value;}}
+    public Vector3 TargetPos {get{return _targetPos;} set{_targetPos = new Vector2(value.x,value.y);}}
+
+    public bool SpecialWait {get{return _specialWait;} set{_specialWait = value;}}
 
     private void Awake() 
     {
+        projectileInputs = GameObject.Find("ProjectileManagerInputs").GetComponent<ProjectileInputs>();
+
         //Setup State
         _states = new ProjectileStateFactory(this);
         _currentState = _states.Held();
         _currentState.EnterState();
-      
+
+        //Setup Player Variables
+        _playerGO = GameObject.Find("Player");
+        _playerRb = GameObject.Find("Player").GetComponent<Rigidbody2D>();
+
+        _projectileGO = this.gameObject;
+        _projectileRb = _projectileGO.GetComponent<Rigidbody2D>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        _projectilePrefab = (GameObject)Resources.Load("Projectile");
     }
 
     // Update is called once per frame
     void Update()
     {
+        UpdateInputs();
         _currentState.UpdateStates();
-        Debug.Log("Current State: " + _currentState);
+        Debug.Log("Current Projectile State: " + _currentState);
+        Debug.Log("Collider: " + _isCollider);
     }
 
-    public void OnMoveButton(InputAction.CallbackContext context)
+    public void UpdateInputs()
     {
-        Debug.Log("Projectile MOVE button PRESSED");
-        _movementInputValue = context.ReadValue<Vector2>();
-    }
-
-    public void OnShootButton(InputAction.CallbackContext context)
-    {
-        Debug.Log("Shoot BUtton:" + _isShootPressed);
-        _isShootPressed = context.ReadValueAsButton();
-        
+        _movementInputValue = projectileInputs.MovementInputValue;
+        _isShootPressed = projectileInputs.IsShootPressed;
+        _isSpecialPressed = projectileInputs.IsSpecialPressed;
     }
 
     public void ProjectileDestroy()
     {
-        Debug.Log("Projectile is destroyed");
         Destroy(this.gameObject);
+    }
+    private void OnCollisionEnter2D(Collision2D collision2D) {
+        Debug.Log("Projectile experienced collision!");
+        _isCollision = collision2D;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider2D) {
+        _isCollider = collider2D;
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(_raycastPos, 0.1f);
     }
 }

@@ -24,14 +24,13 @@ public class PlayerDashState : PlayerBaseState
 
     void StartDash()
     {
-        //Debug.Log("Player enter Dash state");
         Ctx.DashSpeed = 100f;
     }
 
     void PerformDash()
     {
         Vector2 dashDir = Ctx.MovementInputValue.normalized;
-        Ctx.Rb.velocity = dashDir * Ctx.DashSpeed * Time.deltaTime;
+        Ctx.PlayerRb.velocity = dashDir * Ctx.DashSpeed * Time.deltaTime;
         DashSpeedSlowdown();
     }
 

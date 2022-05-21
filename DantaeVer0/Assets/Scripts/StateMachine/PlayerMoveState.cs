@@ -13,23 +13,26 @@ public class PlayerMoveState : PlayerBaseState
         StartMovement();
     }
     public override void UpdateState(){
-        CheckSwitchStates();
+        HandleMoveAnimation();
         PerformMovement();
+        CheckSwitchStates();  
     }
     public override void ExitState(){
-        Debug.Log("Exit MOVE State");
+        Ctx.PlayerRb.velocity = Vector2.zero;
     }
-    public override void InitializeSubState(){
-        if (Ctx.IsDashPressed)
-        {
-            SetSubState(Factory.Dash());
-        }
-
-    }
+    public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
         if (Ctx.IsDashPressed)
         {
             SwitchState(Factory.Dash());
+        }
+        if (Ctx.IsShootPressed)
+        {
+            SwitchState(Factory.Shoot());
+        }
+        if (Ctx.IsSpecialPressed)
+        {
+            SwitchState(Factory.Special());
         }
         else if (!Ctx.IsMovePressed){
             SwitchState(Factory.Idle());
@@ -38,13 +41,21 @@ public class PlayerMoveState : PlayerBaseState
 
     void StartMovement()
     {
-        //Debug.Log("Player enters MOVE state");
+
     }
     void PerformMovement()
     {
+        Ctx.PlayerRb.velocity = Ctx.MovementInputValue.normalized * 25f * Time.deltaTime;
+    }
+
+    public void HandleMoveAnimation()
+    {
         
-        //Debug.Log("Performing MOVE state");
-        Ctx.Rb.velocity = Ctx.MovementInputValue.normalized * 25f * Time.deltaTime;
-        //playerAbilitiesAnimations.HandleMoveAnimation(movementValue.normalized);
+
+            Ctx.Animator.SetFloat("Horizontal", Ctx.MovementInputValue.x);
+            Ctx.Animator.SetFloat("Vertical", Ctx.MovementInputValue.y);
+            Ctx.Animator.SetFloat("Magnitude", Ctx.MovementInputValue.sqrMagnitude);
+            Ctx.Animator.SetFloat("LastHorizontal", Ctx.LastMovementInputValue.x);
+            Ctx.Animator.SetFloat("LastVertical", Ctx.LastMovementInputValue.y);       
     }
 }

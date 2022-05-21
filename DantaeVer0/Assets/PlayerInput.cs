@@ -49,6 +49,14 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Special"",
+                    ""type"": ""Button"",
+                    ""id"": ""14a24693-aeba-42e4-bee9-3efaa084590e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -95,6 +103,17 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                     ""action"": ""Attacking"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""34129a41-fd46-42a5-9abb-7ce7c66d7dac"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Special"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -107,6 +126,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         m_Combat_Shooting = m_Combat.FindAction("Shooting", throwIfNotFound: true);
         m_Combat_Dashing = m_Combat.FindAction("Dashing", throwIfNotFound: true);
         m_Combat_Attacking = m_Combat.FindAction("Attacking", throwIfNotFound: true);
+        m_Combat_Special = m_Combat.FindAction("Special", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -160,6 +180,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
     private readonly InputAction m_Combat_Shooting;
     private readonly InputAction m_Combat_Dashing;
     private readonly InputAction m_Combat_Attacking;
+    private readonly InputAction m_Combat_Special;
     public struct CombatActions
     {
         private @PlayerInput m_Wrapper;
@@ -168,6 +189,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         public InputAction @Shooting => m_Wrapper.m_Combat_Shooting;
         public InputAction @Dashing => m_Wrapper.m_Combat_Dashing;
         public InputAction @Attacking => m_Wrapper.m_Combat_Attacking;
+        public InputAction @Special => m_Wrapper.m_Combat_Special;
         public InputActionMap Get() { return m_Wrapper.m_Combat; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -189,6 +211,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                 @Attacking.started -= m_Wrapper.m_CombatActionsCallbackInterface.OnAttacking;
                 @Attacking.performed -= m_Wrapper.m_CombatActionsCallbackInterface.OnAttacking;
                 @Attacking.canceled -= m_Wrapper.m_CombatActionsCallbackInterface.OnAttacking;
+                @Special.started -= m_Wrapper.m_CombatActionsCallbackInterface.OnSpecial;
+                @Special.performed -= m_Wrapper.m_CombatActionsCallbackInterface.OnSpecial;
+                @Special.canceled -= m_Wrapper.m_CombatActionsCallbackInterface.OnSpecial;
             }
             m_Wrapper.m_CombatActionsCallbackInterface = instance;
             if (instance != null)
@@ -205,6 +230,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                 @Attacking.started += instance.OnAttacking;
                 @Attacking.performed += instance.OnAttacking;
                 @Attacking.canceled += instance.OnAttacking;
+                @Special.started += instance.OnSpecial;
+                @Special.performed += instance.OnSpecial;
+                @Special.canceled += instance.OnSpecial;
             }
         }
     }
@@ -215,5 +243,6 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         void OnShooting(InputAction.CallbackContext context);
         void OnDashing(InputAction.CallbackContext context);
         void OnAttacking(InputAction.CallbackContext context);
+        void OnSpecial(InputAction.CallbackContext context);
     }
 }

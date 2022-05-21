@@ -30,6 +30,10 @@ public class PlayerIdleState : PlayerBaseState
         else if (Ctx.IsAttackPressed){
             SwitchState(Factory.Attack());
         }
+        else if (Ctx.IsSpecialPressed)
+        {
+            SwitchState(Factory.Special());
+        }
     }
 
     void StartIdle()

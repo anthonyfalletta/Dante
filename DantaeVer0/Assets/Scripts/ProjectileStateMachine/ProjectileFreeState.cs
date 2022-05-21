@@ -13,27 +13,26 @@ public class ProjectileFreeState : ProjectileBaseState
         StartFree();
     }
     public override void UpdateState(){
+        PerformFree();
         CheckSwitchStates();
     }
     public override void ExitState(){}
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        /*
-        if (Ctx.IsMovePressed)
-        {
-            SwitchState(Factory.Move());
+        if (Ctx.IsSpecialPressed){
+            SwitchState(Factory.Special());
         }
-        else if (Ctx.IsShootPressed){
-            SwitchState(Factory.Shoot());
-        }
-        else if (Ctx.IsAttackPressed){
-            SwitchState(Factory.Attack());
-        }
-        */
     }
 
     void StartFree()
     {
-        
+        Ctx.IsCollider = null;
+    }
+    void PerformFree()
+    {
+        if (Ctx.IsCollider != null)
+        {
+            Ctx.ProjectileDestroy();
+        }
     }
 }
