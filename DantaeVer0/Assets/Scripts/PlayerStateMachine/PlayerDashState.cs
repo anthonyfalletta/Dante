@@ -10,6 +10,7 @@ public class PlayerDashState : PlayerBaseState
         InitializeSubState();
     }
     public override void EnterState(){
+        Ctx.Animator.SetBool(Ctx.IsDashingHash, true);
         StartDash();
     }
     public override void UpdateState(){
@@ -20,7 +21,9 @@ public class PlayerDashState : PlayerBaseState
     public override void FixedUpdateState(){
         PerformDash();
     }
-    public override void ExitState(){}
+    public override void ExitState(){
+        Ctx.Animator.SetBool(Ctx.IsDashingHash, false);
+    }
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
 
@@ -40,7 +43,7 @@ public class PlayerDashState : PlayerBaseState
 
     private void DashSpeedSlowdown()
     {
-        Ctx.DashSpeed -= Ctx.DashSpeed * 5f * Time.deltaTime;
+        Ctx.DashSpeed -= Ctx.DashSpeed * 2.5f * Time.deltaTime;
 
         if(Ctx.DashSpeed < 20f)
         {

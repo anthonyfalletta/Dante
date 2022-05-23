@@ -9,6 +9,10 @@ public class PlayerStateMachine : MonoBehaviour
     PlayerBaseState _currentState;
     PlayerStateFactory _states;
 
+    //Optimized Animation variables
+    int _isMovingHash;
+    int _isDashingHash;
+
     //Abilities Variables
     bool _isMovePressed;
     bool _isDashPressed;
@@ -37,6 +41,10 @@ public class PlayerStateMachine : MonoBehaviour
 
     //Getters & Setters
     public PlayerBaseState CurrentState{get{return _currentState;} set{_currentState = value;}}
+
+    public int IsMovingHash{get{return _isMovingHash;} set{_isMovingHash = value;}}
+    public int IsDashingHash{get{return _isDashingHash;} set{_isDashingHash = value;}}
+
     public bool IsMovePressed {get{return _isMovePressed;} set{_isMovePressed = value;}}
     public bool IsDashPressed {get{return _isDashPressed;} set{_isDashPressed = value;}}
     public bool IsShootPressed {get{return _isShootPressed;} set{_isShootPressed = value;}}
@@ -62,6 +70,9 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void Awake() 
     {
+        //Setup Optimized Hash Animations
+        AnimationHashing();
+        
         //Setup State
         _states = new PlayerStateFactory(this);
         _currentState = _states.Idle();
@@ -89,12 +100,19 @@ public class PlayerStateMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        HandleMoveAnimation();
         _currentState.UpdateStates();
         Debug.Log("Current State: " + _currentState);
     }
 
     void FixedUpdate() {
         _currentState.FixedUpdateStates();
+    }
+
+    void AnimationHashing()
+    {
+        _isMovingHash = Animator.StringToHash("isMoving");
+        _isDashingHash = Animator.StringToHash("isDashing");
     }
 
     public void OnMoveButton(InputAction.CallbackContext context)
@@ -108,6 +126,16 @@ public class PlayerStateMachine : MonoBehaviour
         }
         //Debug.Log("MOVE Button Is Pressed");
     }
+
+    public void HandleMoveAnimation()
+    {
+        _animator.SetFloat("Horizontal", _movementInputValue.x);
+        _animator.SetFloat("Vertical", _movementInputValue.y);
+        _animator.SetFloat("Magnitude", _movementInputValue.sqrMagnitude);
+        _animator.SetFloat("LastHorizontal", _lastMovementInputValue.x);
+        _animator.SetFloat("LastVertical", _lastMovementInputValue.y);       
+    }
+
     public void OnDashButton(InputAction.CallbackContext context)
     {
         _isDashPressed = context.ReadValueAsButton();

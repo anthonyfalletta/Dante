@@ -10,10 +10,11 @@ public class PlayerMoveState : PlayerBaseState
         InitializeSubState();
     }
     public override void EnterState(){
+        Ctx.Animator.SetBool(Ctx.IsMovingHash, true);
         StartMovement();
     }
     public override void UpdateState(){
-        HandleMoveAnimation();
+        //bool isWalking = Ctx.Animator.GetBool("isMoving");
         CheckSwitchStates();  
     }
 
@@ -21,6 +22,7 @@ public class PlayerMoveState : PlayerBaseState
         PerformMovement();
     }
     public override void ExitState(){
+        Ctx.Animator.SetBool(Ctx.IsMovingHash, false);
         Ctx.PlayerRb.velocity = Vector2.zero;
     }
     public override void InitializeSubState(){}
@@ -51,14 +53,5 @@ public class PlayerMoveState : PlayerBaseState
         Ctx.PlayerRb.velocity = Ctx.MovementInputValue.normalized * 25f * Time.deltaTime;
     }
 
-    public void HandleMoveAnimation()
-    {
-        
-
-            Ctx.Animator.SetFloat("Horizontal", Ctx.MovementInputValue.x);
-            Ctx.Animator.SetFloat("Vertical", Ctx.MovementInputValue.y);
-            Ctx.Animator.SetFloat("Magnitude", Ctx.MovementInputValue.sqrMagnitude);
-            Ctx.Animator.SetFloat("LastHorizontal", Ctx.LastMovementInputValue.x);
-            Ctx.Animator.SetFloat("LastVertical", Ctx.LastMovementInputValue.y);       
-    }
+    
 }
