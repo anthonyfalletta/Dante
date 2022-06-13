@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/ProjectileInput.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/InputMaps/ProjectileInput.inputactions'
 
 using System;
 using System.Collections;
