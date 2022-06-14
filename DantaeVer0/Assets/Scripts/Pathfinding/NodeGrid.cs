@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class NodeGrid : MonoBehaviour
 {
+    public bool onlyDisplayPathGizmos;
     public Transform player;
     public Vector2 gridWorldSize;
     public float nodeRadius;
@@ -17,6 +18,12 @@ public class NodeGrid : MonoBehaviour
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x/nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y/nodeDiameter);
         CreateGrid();
+    }
+
+    public int MaxSize{
+        get{
+            return gridSizeX * gridSizeY;
+        }
     }
 
     void CreateGrid()
@@ -71,21 +78,38 @@ public class NodeGrid : MonoBehaviour
     void OnDrawGizmos() {
         Gizmos.DrawWireCube(transform.position,new Vector3(gridWorldSize.x,gridWorldSize.y,1));
 
-        if (grid != null)
-        {
-            Node playerNode = NodeFromWorldPoint(player.position);
-
-            foreach(Node n in grid)
-            {
-                Gizmos.color = (n.walkable)?Color.white:Color.red;
-                if (path != null)
-                    if (path.Contains(n))
-                        Gizmos.color = Color.black;
-                if (playerNode ==n){
-                    Gizmos.color = Color.cyan;
+        if (onlyDisplayPathGizmos){
+            if (path != null){
+                foreach (Node n in path){
+                    Gizmos.color = Color.black;
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter-0.1f));
                 }
-                Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter-0.1f));
             }
         }
-    }   
+        else
+        {
+            if (grid != null)
+            {
+                //Node playerNode = NodeFromWorldPoint(player.position);
+
+                foreach(Node n in grid)
+                {
+                    Gizmos.color = (n.walkable)?Color.white:Color.red;
+                    if (path != null)
+                        if (path.Contains(n))
+                            Gizmos.color = Color.black;
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter-0.1f));
+                    /*
+                    if (playerNode ==n){
+                        Gizmos.color = Color.cyan;
+                    }
+                    */       
+                }
+            }
+        }
+
+       
+    } 
+
+
 }
