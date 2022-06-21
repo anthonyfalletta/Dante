@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using diag = System.Diagnostics;
 using System;
 
 public class Pathfinding : MonoBehaviour
@@ -9,6 +9,7 @@ public class Pathfinding : MonoBehaviour
  	
 	PathRequestManager requestManager;
 	NodeGrid grid;
+	public Transform target;
 	
 	void Awake() {
 		requestManager = GetComponent<PathRequestManager>();
@@ -22,7 +23,7 @@ public class Pathfinding : MonoBehaviour
 	
 	IEnumerator FindPath(Vector3 startPos, Vector3 targetPos) {
 		
-		Stopwatch sw = new Stopwatch();
+		diag.Stopwatch sw = new diag.Stopwatch();
 		sw.Start();
 		
 		Vector3[] waypoints = new Vector3[0];
@@ -76,7 +77,9 @@ public class Pathfinding : MonoBehaviour
 		
 	}
 		
-	
+	Vector3[] waypoints;
+	int i=0;
+
 	Vector3[] RetracePath(Node startNode, Node endNode) {
 		List<Node> path = new List<Node>();
 		Node currentNode = endNode;
@@ -85,7 +88,13 @@ public class Pathfinding : MonoBehaviour
 			path.Add(currentNode);
 			currentNode = currentNode.parent;
 		}
+
+		List<Vector3[]> waypointsTemp = new List<Vector3[]>();
+		
 		Vector3[] waypoints = SimplifyPath(path);
+
+		//Add target position to waypoints at first or 0 position to go all the way to player
+
 		Array.Reverse(waypoints);
 		return waypoints;
 		
@@ -95,13 +104,17 @@ public class Pathfinding : MonoBehaviour
 		List<Vector3> waypoints = new List<Vector3>();
 		Vector2 directionOld = Vector2.zero;
 		
+		//Add player postion to path
+		//TODO: Setup better structure in scripts to get player positon
+		waypoints.Add(target.position);
+
 		for (int i = 1; i < path.Count; i ++) {
 			Vector2 directionNew = new Vector2(path[i-1].gridX - path[i].gridX,path[i-1].gridY - path[i].gridY);
 			if (directionNew != directionOld) {
 				waypoints.Add(path[i].worldPosition);
 			}
 			directionOld = directionNew;
-		}
+		}	
 		return waypoints.ToArray();
 	}
 	
