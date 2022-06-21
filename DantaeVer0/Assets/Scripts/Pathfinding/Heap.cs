@@ -42,6 +42,7 @@ public class Heap<T> where T : IHeapItem<T>
             return currentItemCount;
         }
     }
+    
     void SortDown(T item){
         while(true){
             int childIndexLeft = item.HeapIndex*2+1;

@@ -12,12 +12,14 @@ public class Node : IHeapItem<Node>
    public int gridY;
    public Node parent;
    int heapIndex;
+   public int movementPenalty;
 
-   public Node(bool _walkable, Vector3 _worldPos, int _gridX, int _gridY){
+   public Node(bool _walkable, Vector3 _worldPos, int _gridX, int _gridY, int _penalty){
        walkable = _walkable;
        worldPosition = _worldPos;
        gridX = _gridX;
        gridY = _gridY;
+       movementPenalty = _penalty;
    }
 
    public int fCost {
@@ -27,12 +29,12 @@ public class Node : IHeapItem<Node>
    }
 
    public int HeapIndex{
-    get{
-        return heapIndex;
-    }
-    set{
-        heapIndex = value;
-    }
+        get{
+            return heapIndex;
+        }
+        set{
+            heapIndex = value;
+        }
    }
 
    public int CompareTo(Node nodeToCompare){
