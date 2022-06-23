@@ -77,8 +77,6 @@ public class Pathfinding : MonoBehaviour
 		
 	}
 		
-	Vector3[] waypoints;
-	int i=0;
 
 	Vector3[] RetracePath(Node startNode, Node endNode) {
 		List<Node> path = new List<Node>();
@@ -88,12 +86,8 @@ public class Pathfinding : MonoBehaviour
 			path.Add(currentNode);
 			currentNode = currentNode.parent;
 		}
-
-		List<Vector3[]> waypointsTemp = new List<Vector3[]>();
 		
 		Vector3[] waypoints = SimplifyPath(path);
-
-		//Add target position to waypoints at first or 0 position to go all the way to player
 
 		Array.Reverse(waypoints);
 		return waypoints;
@@ -105,7 +99,7 @@ public class Pathfinding : MonoBehaviour
 		Vector2 directionOld = Vector2.zero;
 		
 		//Add player postion to path
-		//TODO: Setup better structure in scripts to get player positon
+		//TODO: Setup better structure in scripts to get player positon and maybe move process into Retrace Path or further up in steps
 		waypoints.Add(target.position);
 
 		for (int i = 1; i < path.Count; i ++) {

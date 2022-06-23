@@ -7,9 +7,13 @@ public class Unit : MonoBehaviour
 
 
 	public Transform target;
-	float speed = 20;
-	Vector3[] path;
-	int targetIndex;
+	public float speed = 20;
+	public float turnSpeed = 3;
+	public float turnDst = 5;
+	//Vector3[] path;
+	//int targetIndex;
+
+	Path path;
 
 	void Start() {
 		PathRequestManager.RequestPath(transform.position,target.position, OnPathFound);
@@ -20,16 +24,17 @@ public class Unit : MonoBehaviour
 	//! Unit does not move exactly to player
     //*Need to have path updated during Update and not create queque so instead when change to path happens it is performed
     //*Update of path in conjuction with path update might be best
-    
+    Debug.Log(transform.position);
         if (Keyboard.current[Key.Space].wasPressedThisFrame)
         {
             PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
         }
    }
 
-	public void OnPathFound(Vector3[] newPath, bool pathSuccessful) {
+	//newPath is array of waypoints and changed
+	public void OnPathFound(Vector3[] waypoints, bool pathSuccessful) {
 		if (pathSuccessful) {
-			path = newPath;
+			path = new Path(waypoints, transform.position, turnDst);
 			//targetIndex = 0;
 			StopCoroutine("FollowPath");
 			StartCoroutine("FollowPath");
@@ -37,9 +42,52 @@ public class Unit : MonoBehaviour
 	}
 
 	IEnumerator FollowPath() {
-		Vector3 currentWaypoint = path[0];
+		bool followingPath = true;
+		int pathIndex = 0;
 
-		while (true) {
+		//Rotation to Look At First Waypoint 2D
+		Vector3 initialAngle  = path.lookPoints[0]-transform.position;
+		transform.rotation = Quaternion.LookRotation(initialAngle,Vector3.back);
+
+		while (followingPath){
+			Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
+			while (path.turnBoundaries[pathIndex].HasCrossedLine(pos2D)){
+				if (pathIndex == path.finishLineIndex){
+					followingPath = false;
+					break;
+				}
+				else{
+					pathIndex++;
+				}
+			}	
+
+			/*
+			if (followingPath){
+				Vector3 diffPath  = path.lookPoints[pathIndex]-transform.position;
+				float rot_yPath = Mathf.Atan2(diffPath.y, diffPath.x) * Mathf.Rad2Deg;
+				Quaternion rot_quat = Quaternion.Euler(rot_yPath+180f, 90f, -90f);;
+				transform.rotation = Quaternion.Lerp(transform.rotation,rot_quat, Time.deltaTime*turnSpeed);
+				transform.Translate(Vector3.forward * Time.deltaTime * speed, Space.Self);
+			}
+			*/
+			
+			if (followingPath){
+				
+				//flipping at first causing problems
+				Quaternion targetRotation = Quaternion.LookRotation(path.lookPoints[pathIndex] - transform.position, Vector3.back);
+				transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+				transform.Translate(Vector3.forward * Time.deltaTime * speed, Space.Self);
+			}
+			
+
+			yield return null;
+		}
+
+		//? Older instance of movement before smooth pathing
+		//Vector3 currentWaypoint = path[0];
+		//while (true) {
+			
+			/*
 			if (transform.position == currentWaypoint) {
 				targetIndex ++;
 				if (targetIndex >= path.Length) {
@@ -64,13 +112,17 @@ public class Unit : MonoBehaviour
             */
 
 			//Unit Movement Towards Waypoints
-			transform.position = Vector3.MoveTowards(transform.position,currentWaypoint,speed * Time.deltaTime);
-			yield return null;
+			//transform.position = Vector3.MoveTowards(transform.position,currentWaypoint,speed * Time.deltaTime);		
+			//yield return null;
 
-		}
+		//}
 	}
 
 	public void OnDrawGizmos() {
+		if (path != null){
+			path.DrawWithGizmos();
+		}
+		/*
 		if (path != null) {
 			for (int i = targetIndex; i < path.Length; i ++) {
 				Gizmos.color = Color.black;
@@ -84,5 +136,6 @@ public class Unit : MonoBehaviour
 				}
 			}
 		}
+		*/
 	}
 }
