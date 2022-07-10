@@ -4,32 +4,57 @@ using UnityEngine.InputSystem;
 
 public class Unit : MonoBehaviour
 {
+	//!Big Problem With Hitting/Cutting Corners
+	//!If 3d need to fix axis of top rotation to constraint
+	//!Will need to change path smoothing and simplifying perhaps have nodes points altered as floating parameters
 
 
 	public Transform target;
-	public float speed = 20;
-	public float turnSpeed = 3;
-	public float turnDst = 5;
+	public bool pathView;
+	public float speed = 5;
+	public float turnSpeed = 8;
+	public float turnDst = 8;
 	//Vector3[] path;
 	//int targetIndex;
 
 	Path path;
 
-	void Start() {
-		PathRequestManager.RequestPath(transform.position,target.position, OnPathFound);
+	const float pathUpdateMoveThreshold = 0.5f;
+	const float minPathUpdateTime = 0.2f;
+
+	Rigidbody rb;
+
+	private void Awake() {
+		rb = GetComponent<Rigidbody>();
 	}
 
-	 private void Update() {
-    //! Using Update to Recalculate if Target Moves
-	//! Unit does not move exactly to player
-    //*Need to have path updated during Update and not create queque so instead when change to path happens it is performed
-    //*Update of path in conjuction with path update might be best
-    Debug.Log(transform.position);
-        if (Keyboard.current[Key.Space].wasPressedThisFrame)
-        {
-            PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
-        }
-   }
+	void Start() {
+		StartCoroutine(UpdatePath());
+	}
+
+	private void Update() {
+		Debug.Log(transform.position);
+	}
+
+	IEnumerator UpdatePath(){
+		
+		if (Time.timeSinceLevelLoad < .3f){
+			yield return new WaitForSeconds(.3f);
+		}
+		PathRequestManager.RequestPath(new PathRequest(transform.position,target.position,OnPathFound));
+
+		float sqrMoveThreshold = pathUpdateMoveThreshold * pathUpdateMoveThreshold;
+		Vector3 targetPosOld = target.position;
+
+		while(true){
+			yield return new WaitForSeconds (minPathUpdateTime);
+			if((target.position - targetPosOld).sqrMagnitude > sqrMoveThreshold)
+			{
+				PathRequestManager.RequestPath(new PathRequest(transform.position,target.position,OnPathFound));
+				targetPosOld = target.position;
+			}	
+		}
+	}
 
 	//newPath is array of waypoints and changed
 	public void OnPathFound(Vector3[] waypoints, bool pathSuccessful) {
@@ -45,9 +70,16 @@ public class Unit : MonoBehaviour
 		bool followingPath = true;
 		int pathIndex = 0;
 
-		//Rotation to Look At First Waypoint 2D
+		//Rotation to Look At First Waypoint
 		Vector3 initialAngle  = path.lookPoints[0]-transform.position;
+
+		//Not Physics Rotation
 		transform.rotation = Quaternion.LookRotation(initialAngle,Vector3.back);
+
+		//Physics Rotation
+		//Quaternion startRbRot = Quaternion.LookRotation(initialAngle,Vector3.back);
+		//rb.MoveRotation(startRbRot);
+		
 
 		while (followingPath){
 			Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
@@ -72,16 +104,16 @@ public class Unit : MonoBehaviour
 			*/
 			
 			if (followingPath){
-				
-				//flipping at first causing problems
 				Quaternion targetRotation = Quaternion.LookRotation(path.lookPoints[pathIndex] - transform.position, Vector3.back);
 				transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+				//rb.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
 				transform.Translate(Vector3.forward * Time.deltaTime * speed, Space.Self);
+				//rb.MovePosition((Vector3)transform.position + (transform.forward * speed * 5f* Time.deltaTime));
 			}
 			
-
 			yield return null;
 		}
+
 
 		//? Older instance of movement before smooth pathing
 		//Vector3 currentWaypoint = path[0];
@@ -118,8 +150,9 @@ public class Unit : MonoBehaviour
 		//}
 	}
 
+	
 	public void OnDrawGizmos() {
-		if (path != null){
+		if (path != null && pathView){
 			path.DrawWithGizmos();
 		}
 		/*
