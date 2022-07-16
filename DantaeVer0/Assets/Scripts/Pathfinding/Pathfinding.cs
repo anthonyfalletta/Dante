@@ -7,21 +7,17 @@ using System;
 public class Pathfinding : MonoBehaviour
 {
  	
-	PathRequestManager requestManager;
+	//PathRequestManager requestManager;
 	NodeGrid grid;
 	public Transform target;
 	
 	void Awake() {
-		requestManager = GetComponent<PathRequestManager>();
+		//requestManager = GetComponent<PathRequestManager>();
 		grid = GetComponent<NodeGrid>();
 	}
 	
 	
-	public void StartFindPath(Vector3 startPos, Vector3 targetPos) {
-		StartCoroutine(FindPath(startPos,targetPos));
-	}
-	
-	IEnumerator FindPath(Vector3 startPos, Vector3 targetPos) {
+	public void FindPath(PathRequest request, Action<PathResult> callback) {
 		
 		diag.Stopwatch sw = new diag.Stopwatch();
 		sw.Start();
@@ -29,8 +25,8 @@ public class Pathfinding : MonoBehaviour
 		Vector3[] waypoints = new Vector3[0];
 		bool pathSuccess = false;
 		
-		Node startNode = grid.NodeFromWorldPoint(startPos);
-		Node targetNode = grid.NodeFromWorldPoint(targetPos);
+		Node startNode = grid.NodeFromWorldPoint(request.pathStart);
+		Node targetNode = grid.NodeFromWorldPoint(request.pathEnd);
 		startNode.parent = startNode;
 		
 		
@@ -69,16 +65,13 @@ public class Pathfinding : MonoBehaviour
 				}
 			}
 		}
-		yield return null;
 		if (pathSuccess) {
 			waypoints = RetracePath(startNode,targetNode);
+			pathSuccess = waypoints.Length > 0;
 		}
-		requestManager.FinishedProcessingPath(waypoints,pathSuccess);
+		callback(new PathResult(waypoints, pathSuccess, request.callback));
 		
 	}
-		
-	Vector3[] waypoints;
-	int i=0;
 
 	Vector3[] RetracePath(Node startNode, Node endNode) {
 		List<Node> path = new List<Node>();

@@ -4,27 +4,35 @@ using UnityEngine.InputSystem;
 
 public class Unit : MonoBehaviour
 {
-
+	const float minPathUpdateTIme = 0.2f; 
+	const float pathUpdateMoveThreshold = 0.5f;
 
 	public Transform target;
-	float speed = 20;
+	public float speed = 20;
 	Vector3[] path;
 	int targetIndex;
 
 	void Start() {
-		PathRequestManager.RequestPath(transform.position,target.position, OnPathFound);
+		StartCoroutine(UpdatePath());
 	}
 
-	 private void Update() {
-    //! Using Update to Recalculate if Target Moves
-	//! Unit does not move exactly to player
-    //*Need to have path updated during Update and not create queque so instead when change to path happens it is performed
-    //*Update of path in conjuction with path update might be best
-    
-        if (Keyboard.current[Key.Space].wasPressedThisFrame)
-        {
-            PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
-        }
+   IEnumerator UpdatePath(){
+		if(Time.timeSinceLevelLoad < 0.3f){
+			yield return new WaitForSeconds(0.3f);
+		}
+		PathRequestManager.RequestPath(new PathRequest(transform.position, target.position, OnPathFound));
+
+		float sqrMoveThreshold = pathUpdateMoveThreshold * pathUpdateMoveThreshold;
+		Vector3 targetPosOld = target.position;
+
+	while (true){
+		yield return new WaitForSeconds (minPathUpdateTIme);
+
+		if ((target.position-targetPosOld).sqrMagnitude > sqrMoveThreshold){
+			PathRequestManager.RequestPath(new PathRequest(transform.position,target.position, OnPathFound));
+			targetPosOld = target.position;
+		}	
+	}
    }
 
 	public void OnPathFound(Vector3[] newPath, bool pathSuccessful) {

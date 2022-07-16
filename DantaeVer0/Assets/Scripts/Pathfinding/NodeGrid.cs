@@ -69,7 +69,7 @@ public class NodeGrid : MonoBehaviour
 			}
 		}
 
-		BlurPenaltyMap (3);
+		BlurPenaltyMap (10);
 
 	}
 
