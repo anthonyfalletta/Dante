@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class NodeGrid : MonoBehaviour
 {
 	//? 2D Fast Fourier Transform would be more efficient for smoothing blurring
-
 	public bool displayGridGizmos;
 	public LayerMask unwalkableMask;
 	public Vector2 gridWorldSize;
@@ -171,5 +170,4 @@ public class NodeGrid : MonoBehaviour
 		public LayerMask terrainMask;
 		public int terrainPenalty;
 	}
-
 }

@@ -51,8 +51,8 @@ public class Unit : MonoBehaviour
 			if (transform.position == currentWaypoint) {
 				targetIndex ++;
 				if (targetIndex >= path.Length) {
-					targetIndex = 0;
-					path = new Vector3[0];
+					//?targetIndex = 0;
+					//?path = new Vector3[0];
 					yield break;
 				}
 				currentWaypoint = path[targetIndex];
@@ -82,7 +82,7 @@ public class Unit : MonoBehaviour
 		if (path != null) {
 			for (int i = targetIndex; i < path.Length; i ++) {
 				Gizmos.color = Color.black;
-				Gizmos.DrawCube(path[i], new Vector3(1,1,5));
+				Gizmos.DrawCube(path[i], Vector3.one);
 
 				if (i == targetIndex) {
 					Gizmos.DrawLine(transform.position, path[i]);

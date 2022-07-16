@@ -82,9 +82,12 @@ public class Pathfinding : MonoBehaviour
 			currentNode = currentNode.parent;
 		}
 
-		List<Vector3[]> waypointsTemp = new List<Vector3[]>();
+		//List<Vector3[]> waypointsTemp = new List<Vector3[]>();
 		
-		Vector3[] waypoints = SimplifyPath(path);
+		path.Add(currentNode);
+		
+		//!Vector3[] waypoints = SimplifyPath(path);
+		Vector3[] waypoints = JustPath(path);
 
 		//Add target position to waypoints at first or 0 position to go all the way to player
 
@@ -99,7 +102,7 @@ public class Pathfinding : MonoBehaviour
 		
 		//Add player postion to path
 		//TODO: Setup better structure in scripts to get player positon
-		waypoints.Add(target.position);
+		//waypoints.Add(target.position);
 
 		for (int i = 1; i < path.Count; i ++) {
 			Vector2 directionNew = new Vector2(path[i-1].gridX - path[i].gridX,path[i-1].gridY - path[i].gridY);
@@ -107,6 +110,17 @@ public class Pathfinding : MonoBehaviour
 				waypoints.Add(path[i].worldPosition);
 			}
 			directionOld = directionNew;
+		}	
+		return waypoints.ToArray();
+	}
+
+	Vector3[] JustPath(List<Node> path){
+		List<Vector3> waypoints = new List<Vector3>();
+
+		//waypoints.Add(target.position);
+		
+		for (int i = 1; i < path.Count; i ++) {		
+				waypoints.Add(path[i].worldPosition);
 		}	
 		return waypoints.ToArray();
 	}
