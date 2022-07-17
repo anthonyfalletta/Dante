@@ -4,7 +4,9 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.Burst;
 using System.Diagnostics;
+using System;
 
 public class Pathfinding : MonoBehaviour
 {
@@ -14,21 +16,33 @@ public class Pathfinding : MonoBehaviour
     private void Start() {
         var sw = new Stopwatch();
         sw.Start();
-        for(int i=0; i<5; i++){
-            FindPath(new int2(0,0), new int2(19,19));
+
+        int findPathJobCount = 5;
+        NativeArray<JobHandle> jobHandleArray = new NativeArray<JobHandle>(findPathJobCount, Allocator.TempJob);
+        FindPathJob findPathJob = new FindPathJob{
+                startPosition = new int2(0,0),
+                endPosition = new int2(9,7)
+            }; 
+
+        for(int i=0; i<5; i++){   
+            jobHandleArray[i] = findPathJob.Schedule();
         }
+
+        JobHandle.CompleteAll(jobHandleArray);
+        jobHandleArray.Dispose();
+
         sw.Stop();
-        UnityEngine.Debug.Log("elapsed time: " + sw.ElapsedMilliseconds);
+        UnityEngine.Debug.Log("elapsed time: " + sw.Elapsed.TotalMilliseconds + " milliseconds");
     }
 
+    //![BurstCompile]
     private struct FindPathJob : IJob{
-        public void Execute(){
-            throw new System.NotImplementedException();
-        }
-    }
 
-    private void FindPath(int2 startPosition, int2 endPosition){
-        //Setup Grid
+        public int2 startPosition;
+        public int2 endPosition;
+
+        public void Execute(){
+            //Setup Grid
         int2 gridSize = new int2(40,40);
 
         NativeArray<PathNode> pathNodeArray = new NativeArray<PathNode>(gridSize.x * gridSize.y, Allocator.Temp);
@@ -62,6 +76,8 @@ public class Pathfinding : MonoBehaviour
         walkalbePathNode.SetIsWalkable(false);
         pathNodeArray[CalculateIndex(1,2,gridSize.x)] = walkalbePathNode;
 
+        //int2[] does not operate in burst compiler
+        /*
         NativeArray<int2> neighbourOffsetArray = new NativeArray<int2>(new int2[]{
             new int2(-1,0),//Left
             new int2(+1,0),//Right
@@ -72,7 +88,18 @@ public class Pathfinding : MonoBehaviour
             new int2(+1, -1),//Right Down
             new int2(+1, +1),//RIght Up
         }, Allocator.Temp);
-        
+        */
+
+        NativeArray<int2> neighbourOffsetArray = new NativeArray<int2>(8, Allocator.Temp);
+        neighbourOffsetArray[0] = new int2(-1,0);//Left
+        neighbourOffsetArray[1] =  new int2(+1,0);//Right   
+        neighbourOffsetArray[2] = new int2(0,+1);//Up
+        neighbourOffsetArray[3] =  new int2(0,-1);//Down   
+        neighbourOffsetArray[4] = new int2(-1,-1);//Left Down
+        neighbourOffsetArray[5] =  new int2(-1,+1);//Left Up   
+         neighbourOffsetArray[6] = new int2(+1,-1);//Right Down
+        neighbourOffsetArray[7] =  new int2(+1,+1);//Right Up      
+
         //Calculation End Node Index
         int endNodeIndex = CalculateIndex(endPosition.x, endPosition.y, gridSize.x);
 
@@ -88,6 +115,7 @@ public class Pathfinding : MonoBehaviour
         openList.Add(startNode.index);
 
         while (openList.Length > 0){
+            //TODO Heap Optimize this code
             int currentNodeIndex = GetLowestCostFNodeIndex(openList, pathNodeArray);
             PathNode currentNode = pathNodeArray[currentNodeIndex];
 
@@ -152,9 +180,13 @@ public class Pathfinding : MonoBehaviour
             //Found Path
             NativeList<int2> path = CalculatePath(pathNodeArray, endNode);
 
+            //!Does not work in burst fyi
+            
             foreach(int2 pathPosition in path){
                 UnityEngine.Debug.Log(pathPosition);
             }
+            
+
             path.Dispose();
         }
 
@@ -163,9 +195,12 @@ public class Pathfinding : MonoBehaviour
         openList.Dispose();
         closedList.Dispose();
         
-    }
+        }
 
-    private NativeList<int2> CalculatePath (NativeArray<PathNode> pathNodeArray, PathNode endNode){
+
+
+        //Functions for A* Algorithm
+        private NativeList<int2> CalculatePath (NativeArray<PathNode> pathNodeArray, PathNode endNode){
         if (endNode.cameFromNodeIndex == -1){
             //Didn't find path
             return new NativeList<int2>(Allocator.Temp);
@@ -213,9 +248,12 @@ public class Pathfinding : MonoBehaviour
             }
         }
         return lowestCostPathNode.index;
-    }
+        }
 
-    private struct PathNode{
+
+
+    //Node struct for reference with A* algorithm
+    private struct PathNode:IHeapItem<PathNode>{
         public int x;
         public int y;
 
@@ -235,5 +273,127 @@ public class Pathfinding : MonoBehaviour
         public void SetIsWalkable(bool isWalkable){
             this.isWalkable = isWalkable;
         }
+
+        public int HeapIndex{
+            get{
+                return HeapIndex;
+            }
+            set{
+                HeapIndex = value;
+            }
+        }
+
+        public int CompareTo(PathNode nodeToCompare){
+            int compare = fCost.CompareTo(nodeToCompare.fCost);
+            if(compare==0){
+                compare = hCost.CompareTo(nodeToCompare.hCost);
+            }
+            return -compare;
+        }
+        }
     }
+        
+}
+
+
+
+public class Heap<T> where T : IHeapItem<T> {
+	
+	T[] items;
+	int currentItemCount;
+	
+	public Heap(int maxHeapSize) {
+		items = new T[maxHeapSize];
+	}
+	
+	public void Add(T item) {
+		item.HeapIndex = currentItemCount;
+		items[currentItemCount] = item;
+		SortUp(item);
+		currentItemCount++;
+	}
+
+	public T RemoveFirst() {
+		T firstItem = items[0];
+		currentItemCount--;
+		items[0] = items[currentItemCount];
+		items[0].HeapIndex = 0;
+		SortDown(items[0]);
+		return firstItem;
+	}
+
+	public void UpdateItem(T item) {
+		SortUp(item);
+	}
+
+	public int Count {
+		get {
+			return currentItemCount;
+		}
+	}
+
+	public bool Contains(T item) {
+		return Equals(items[item.HeapIndex], item);
+	}
+
+	void SortDown(T item) {
+		while (true) {
+			int childIndexLeft = item.HeapIndex * 2 + 1;
+			int childIndexRight = item.HeapIndex * 2 + 2;
+			int swapIndex = 0;
+
+			if (childIndexLeft < currentItemCount) {
+				swapIndex = childIndexLeft;
+
+				if (childIndexRight < currentItemCount) {
+					if (items[childIndexLeft].CompareTo(items[childIndexRight]) < 0) {
+						swapIndex = childIndexRight;
+					}
+				}
+
+				if (item.CompareTo(items[swapIndex]) < 0) {
+					Swap (item,items[swapIndex]);
+				}
+				else {
+					return;
+				}
+
+			}
+			else {
+				return;
+			}
+
+		}
+	}
+	
+	void SortUp(T item) {
+		int parentIndex = (item.HeapIndex-1)/2;
+		
+		while (true) {
+			T parentItem = items[parentIndex];
+			if (item.CompareTo(parentItem) > 0) {
+				Swap (item,parentItem);
+			}
+			else {
+				break;
+			}
+
+			parentIndex = (item.HeapIndex-1)/2;
+		}
+	}
+	
+	void Swap(T itemA, T itemB) {
+		items[itemA.HeapIndex] = itemB;
+		items[itemB.HeapIndex] = itemA;
+		int itemAIndex = itemA.HeapIndex;
+		itemA.HeapIndex = itemB.HeapIndex;
+		itemB.HeapIndex = itemAIndex;
+	}
+}
+
+public interface IHeapItem<T> : IComparable<T> {
+	int HeapIndex {
+		get;
+		set;
+	}
 }

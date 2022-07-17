@@ -1245,7 +1245,6 @@ GameObject:
   - component: {fileID: 1324109643}
   - component: {fileID: 1324109642}
   - component: {fileID: 1324109644}
-  - component: {fileID: 1324109645}
   m_Layer: 9
   m_Name: Enemy
   m_TagString: Untagged
@@ -1343,19 +1342,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.120086074, y: 0.16}
   m_EdgeRadius: 0
---- !u!114 &1324109645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1324109641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07a1e38805e36314885559a1b488d907, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1620086000}
 --- !u!1 &1554523875
 GameObject:
   m_ObjectHideFlags: 0
@@ -3430,8 +3416,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1791479879}
   - component: {fileID: 1791479880}
-  - component: {fileID: 1791479882}
-  - component: {fileID: 1791479881}
   m_Layer: 0
   m_Name: PathfindingManager
   m_TagString: Untagged
@@ -3462,46 +3446,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1791479878}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7df8f17eaa4dfb4fa154e9029d124ec, type: 3}
+  m_Script: {fileID: 11500000, guid: fd165afdd84a8a646a464389bb22f782, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayGridGizmos: 0
-  unwalkableMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  gridWorldSize: {x: 36, y: 36}
-  nodeRadius: 0.2
-  walkableRegions:
-  - terrainMask:
-      serializedVersion: 2
-      m_Bits: 16384
-    terrainPenalty: 0
-  obstacleProximityPenalty: 25
---- !u!114 &1791479881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1791479878}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed8ca21089974d1458fcade6f6238937, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1791479882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1791479878}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6f3f9230f4857045a38c4ab577c1af8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1620086000}
 --- !u!1 &2023932602
 GameObject:
   m_ObjectHideFlags: 0
