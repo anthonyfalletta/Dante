@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
@@ -8,11 +8,14 @@ using Unity.Burst;
 using System.Diagnostics;
 using System;
 
-public class Pathfinding : MonoBehaviour
+public class PathfindingChange : MonoBehaviour
 {
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
-
+    static int size = 0;
+    static int maxsize = 0;
+    private const int FRONT = 1;
+    
     private void Start() {
         var sw = new Stopwatch();
         sw.Start();
@@ -116,30 +119,36 @@ public class Pathfinding : MonoBehaviour
 
         NativeList<int> openList = new NativeList<int>(Allocator.Temp);
         NativeList<int> closedList = new NativeList<int>(Allocator.Temp);
+        
+        SetSize(0);
+        SetMaxsize(gridSize.x*gridSize.y-1);
+        openList.Add(0);
 
-        openList.Add(startNode.index);
+        //openList.Add(startNode.index);
+        insert(startNode.index, openList, pathNodeArray);
 
         while (openList.Length > 0){
+            
+
             //TODO Heap Optimize this code
-            //* In GetLowestCostFNodeIndex have reference to Min. Heap where will go through tree top to bottom down, left to right (faster than array search)
+            //*Will use min Priority Heap, will peek minimum and make sure lowere than top openList int for pathArray
+            //* remove this openList min value  
             int currentNodeIndex = GetLowestCostFNodeIndex(openList, pathNodeArray);
             PathNode currentNode = pathNodeArray[currentNodeIndex];
-                UnityEngine.Debug.Log("Current Node Index: " + currentNodeIndex);
+        
             if (currentNodeIndex == endNodeIndex){
                 //Reach Destination
                 break;
             }
 
-            //Remove current node from Open List
-            //* Could this be simplified to if openList[currentNodeIndex] == currentNode or do Max. Heap search as faster
-            for (int i =0; i < openList.Length; i++){
-                UnityEngine.Debug.Log("Remove Current Node - i: " + i);
+            
+             for (int i =0; i < openList.Length; i++){
                 if (openList[i] == currentNodeIndex){
-                    UnityEngine.Debug.Log("Remove Current Node == - openList: " + openList[i]);
                     openList.RemoveAtSwapBack(i);   
                     break;
                 }
             }
+
 
             closedList.Add(currentNodeIndex);
 
@@ -175,7 +184,7 @@ public class Pathfinding : MonoBehaviour
                     pathNodeArray[neighbourNodeIndex] = neighbourNode;
 
                     if (!openList.Contains(neighbourNode.index)){
-                        openList.Add(neighbourNode.index);
+                        insert(neighbourNode.index, openList, pathNodeArray);
                     }
                 }
             }
@@ -249,162 +258,177 @@ public class Pathfinding : MonoBehaviour
     }
 
     private int GetLowestCostFNodeIndex(NativeList<int> openList, NativeArray<PathNode> pathNodeArray){
-        PathNode lowestCostPathNode = pathNodeArray[openList[0]];
-        for (int i = 1; i< openList.Length; i++){
-            UnityEngine.Debug.Log("Lowest FCost - i: " + i);
-            PathNode testPathNode = pathNodeArray[openList[i]];
+        PathNode lowestCostPathNode = pathNodeArray[openList[FRONT]];
+        PathNode testPathNode = pathNodeArray[getMin(openList)];
             if (testPathNode.fCost < lowestCostPathNode.fCost){
                 lowestCostPathNode = testPathNode;
-                UnityEngine.Debug.Log("Lowest FCost - OpenList i: " + i);
             }
-        }
+    
         return lowestCostPathNode.index;
+    }
+
+        //Minimum Priority Heap Logic
+        static void SetSize(int sizeValue){
+            size = sizeValue;
         }
 
-
-
-    //Node struct for reference with A* algorithm
-    private struct PathNode:IHeapItem<PathNode>{
-        public int x;
-        public int y;
-
-        public int index;
-
-        public int gCost;
-        public int hCost;
-        public int fCost;
-
-        public bool isWalkable;
-        public int cameFromNodeIndex;
-
-        public void CalculateFCost(){
-            fCost = gCost + hCost;
+        static void SetMaxsize(int maxsizeValue){
+            maxsize = maxsizeValue;
         }
-
-        public void SetIsWalkable(bool isWalkable){
-            this.isWalkable = isWalkable;
+        
+        // Function to return the index of the
+        // parent node of a given node
+        static int parent(int i)
+        {
+            return (i) / 2;
         }
-
-        public int HeapIndex{
-            get{
-                return HeapIndex;
+        
+        // Function to return the index of the
+        // left child of the given node
+        static int leftChild(int i)
+        {
+            return ((2 * i));
+        }
+        
+        // Function to return the index of the
+        // right child of the given node
+        static int rightChild(int i)
+        {
+            return ((2 * i) + 1);
+        }
+        
+    // Method 4
+        // Returning true if the passed
+        // node is a leaf node
+        private bool isLeaf(int pos)
+        {
+    
+            if (pos > (size / 2)) {
+                return true;
             }
-            set{
-                HeapIndex = value;
+    
+            return false;
+        }
+        
+        // Method 5
+        // To swap two nodes of the heap
+        private void swap(int fpos, int spos, NativeList<int> H)
+        {
+    
+            int tmp;
+            tmp = H[fpos];
+    
+            H[fpos] = H[spos];
+            H[spos] = tmp;
+        }
+        
+        // Method 6
+        // To heapify the node at pos
+    private void minHeapify(int pos, NativeList<int> H, NativeArray<PathNode> pathNodeArray)
+    {     
+        if(!isLeaf(pos)){
+            
+        //swap with the minimum of the two children
+        int swapPos = GetFCost(pathNodeArray,H[leftChild(pos)]) < GetFCost(pathNodeArray,H[rightChild(pos)]) ? leftChild(pos):rightChild(pos);
+            
+        if(GetFCost(pathNodeArray,H[pos]) > GetFCost(pathNodeArray,H[leftChild(pos)])  || GetFCost(pathNodeArray,H[pos]) > GetFCost(pathNodeArray,H[rightChild(pos)])){
+            swap(pos,swapPos, H);
+            minHeapify(swapPos, H, pathNodeArray);
+        }
+            
+        }      
+    }
+        
+        // Method 7
+        // To insert a node into the heap
+        private void insert(int element, NativeList<int> H, NativeArray<PathNode> pathNodeArray)
+        {
+    
+            if (size >= maxsize) {
+                return;
+            }
+            H.Add(element);
+            H[++size] = element;
+            int current = size;
+    
+            while (GetFCost(pathNodeArray,H[current]) < GetFCost(pathNodeArray,H[parent(current)])) {
+                swap(current, parent(current), H);
+                current = parent(current);
+            }
+        }
+        
+        // Method 8
+        // To print the contents of the heap
+        public void print(NativeArray<int> values, NativeList<int> H)
+        {
+            for (int i = 0; i < H.Length; i++) {
+    
+                // Printing the parent and both childrens
+                UnityEngine.Debug.Log(" LISTING : " + H[i]);
             }
         }
 
-        public int CompareTo(PathNode nodeToCompare){
-            int compare = fCost.CompareTo(nodeToCompare.fCost);
-            if(compare==0){
-                compare = hCost.CompareTo(nodeToCompare.hCost);
+        private void printTree(NativeArray<PathNode> pathNodeArray,NativeList<int> H)
+        {
+            for (int i = 1; i <= size / 2; i++) {
+    
+                // Printing the parent and both childrens
+                UnityEngine.Debug.Log(
+                    " PARENT : " + GetFCost(pathNodeArray,H[i])
+                    + " LEFT CHILD : " + GetFCost(pathNodeArray,H[2 * i])
+                    + " RIGHT CHILD :" + GetFCost(pathNodeArray,H[2 * i + 1]));
+
             }
-            return -compare;
         }
+        
+        // Method 9
+        // To remove and return the minimum
+        // element from the heap
+        private int remove(NativeList<int> H, NativeArray<PathNode> pathNodeArray)
+        {
+            int popped = H[FRONT];
+            H[FRONT] = H[size--];
+
+            minHeapify(FRONT, H, pathNodeArray);
+    
+            return popped;
+        }
+
+        public int getMin(NativeList<int> H)
+        {
+            return H[FRONT];
+        }
+
+        static int GetFCost(NativeArray<PathNode> pathNodeArray,int index){
+            int fCost = pathNodeArray[index].fCost;
+            return fCost;
+        }
+
+        //Node struct for reference with A* algorithm
+        private struct PathNode{
+            public int x;
+            public int y;
+
+            public int index;
+
+            public int gCost;
+            public int hCost;
+            public int fCost;
+
+            public bool isWalkable;
+            public int cameFromNodeIndex;
+
+            public void CalculateFCost(){
+                fCost = gCost + hCost;
+            }
+
+            public void SetIsWalkable(bool isWalkable){
+                this.isWalkable = isWalkable;
+            }
+
         }
     }
         
 }
 
 
-
-public class Heap<T> where T : IHeapItem<T> {
-	
-	T[] items;
-	int currentItemCount;
-	
-	public Heap(int maxHeapSize) {
-		items = new T[maxHeapSize];
-	}
-	
-	public void Add(T item) {
-		item.HeapIndex = currentItemCount;
-		items[currentItemCount] = item;
-		SortUp(item);
-		currentItemCount++;
-	}
-
-	public T RemoveFirst() {
-		T firstItem = items[0];
-		currentItemCount--;
-		items[0] = items[currentItemCount];
-		items[0].HeapIndex = 0;
-		SortDown(items[0]);
-		return firstItem;
-	}
-
-	public void UpdateItem(T item) {
-		SortUp(item);
-	}
-
-	public int Count {
-		get {
-			return currentItemCount;
-		}
-	}
-
-	public bool Contains(T item) {
-		return Equals(items[item.HeapIndex], item);
-	}
-
-	void SortDown(T item) {
-		while (true) {
-			int childIndexLeft = item.HeapIndex * 2 + 1;
-			int childIndexRight = item.HeapIndex * 2 + 2;
-			int swapIndex = 0;
-
-			if (childIndexLeft < currentItemCount) {
-				swapIndex = childIndexLeft;
-
-				if (childIndexRight < currentItemCount) {
-					if (items[childIndexLeft].CompareTo(items[childIndexRight]) < 0) {
-						swapIndex = childIndexRight;
-					}
-				}
-
-				if (item.CompareTo(items[swapIndex]) < 0) {
-					Swap (item,items[swapIndex]);
-				}
-				else {
-					return;
-				}
-
-			}
-			else {
-				return;
-			}
-
-		}
-	}
-	
-	void SortUp(T item) {
-		int parentIndex = (item.HeapIndex-1)/2;
-		
-		while (true) {
-			T parentItem = items[parentIndex];
-			if (item.CompareTo(parentItem) > 0) {
-				Swap (item,parentItem);
-			}
-			else {
-				break;
-			}
-
-			parentIndex = (item.HeapIndex-1)/2;
-		}
-	}
-	
-	void Swap(T itemA, T itemB) {
-		items[itemA.HeapIndex] = itemB;
-		items[itemB.HeapIndex] = itemA;
-		int itemAIndex = itemA.HeapIndex;
-		itemA.HeapIndex = itemB.HeapIndex;
-		itemB.HeapIndex = itemAIndex;
-	}
-}
-
-public interface IHeapItem<T> : IComparable<T> {
-	int HeapIndex {
-		get;
-		set;
-	}
-}
