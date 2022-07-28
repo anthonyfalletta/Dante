@@ -3422,6 +3422,7 @@ GameObject:
   - component: {fileID: 1791479884}
   - component: {fileID: 1791479885}
   - component: {fileID: 1791479886}
+  - component: {fileID: 1791479887}
   m_Layer: 0
   m_Name: PathfindingManager
   m_TagString: Untagged
@@ -3486,7 +3487,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1791479878}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d1e6a1c6a2b59ec46b61f6e2bac3150d, type: 3}
   m_Name: 
@@ -3525,6 +3526,18 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c153395a833d4142bf4cbd08781ca0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1791479887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791479878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0285e2c066c6f354585a3e5b005fe87a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2023932602
