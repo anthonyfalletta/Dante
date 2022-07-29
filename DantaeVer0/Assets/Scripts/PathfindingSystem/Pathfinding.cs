@@ -1,57 +1,48 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Burst;
-using System.Diagnostics;
-using System;
+using Unity.Entities;
 
-public class PathfindingChange : MonoBehaviour
+public class Pathfinding : ComponentSystem
 {
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
-    static int size = 0;
-    static int maxsize = 0;
-    private const int FRONT = 1;
-    
-    private void Start() {
-        var sw = new Stopwatch();
-        sw.Start();
 
-        /*
-        int findPathJobCount = 5;
-        NativeArray<JobHandle> jobHandleArray = new NativeArray<JobHandle>(findPathJobCount, Allocator.TempJob);
-        FindPathJob findPathJob = new FindPathJob{
-                startPosition = new int2(0,0),
-                endPosition = new int2(2,3)
-            }; 
+    protected override void OnUpdate()
+    {
+        Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref PathfindingParams pathfindingParams) => {
+            Debug.Log("FindPath!");
+            FindPathJob findPathJob = new FindPathJob{
+                startPosition = pathfindingParams.startPosition,
+                endPosition = pathfindingParams.endPosition,
+                pathPositionBuffer = pathPositionBuffer,
+                entity = entity,
+                pathFollowComponentDataFromEntity = GetComponentDataFromEntity<PathFollow>()
+            };
+            findPathJob.Run();
 
-        for(int i=0; i<5; i++){   
-            jobHandleArray[i] = findPathJob.Schedule();
-        }
-
-        JobHandle.CompleteAll(jobHandleArray);
-        jobHandleArray.Dispose();
-        */
-
-        FindPathJob findPathJob = new FindPathJob{startPosition=new int2(0, 0), endPosition=new int2(2,3)};
-        findPathJob.Run();
-
-        sw.Stop();
-        UnityEngine.Debug.Log("elapsed time: " + sw.Elapsed.TotalMilliseconds + " milliseconds");
+            PostUpdateCommands.RemoveComponent<PathfindingParams>(entity);
+        });
+        
     }
 
-    //![BurstCompile]
+    [BurstCompile]
     private struct FindPathJob : IJob{
 
         public int2 startPosition;
         public int2 endPosition;
 
+        public Entity entity;
+        public ComponentDataFromEntity<PathFollow> pathFollowComponentDataFromEntity;
+        public DynamicBuffer<PathPosition> pathPositionBuffer;
+
         public void Execute(){
             //Setup Grid
-        int2 gridSize = new int2(4,4);
+        int2 gridSize = new int2(100,100);
 
         NativeArray<PathNode> pathNodeArray = new NativeArray<PathNode>(gridSize.x * gridSize.y, Allocator.Temp);
 
@@ -80,9 +71,6 @@ public class PathfindingChange : MonoBehaviour
         walkalbePathNode.SetIsWalkable(false);
         pathNodeArray[CalculateIndex(1,1,gridSize.x)] = walkalbePathNode;
         
-        walkalbePathNode = pathNodeArray[CalculateIndex(1,2,gridSize.x)];
-        walkalbePathNode.SetIsWalkable(false);
-        pathNodeArray[CalculateIndex(1,2,gridSize.x)] = walkalbePathNode;
 
         //int2[] does not operate in burst compiler
         /*
@@ -119,36 +107,27 @@ public class PathfindingChange : MonoBehaviour
 
         NativeList<int> openList = new NativeList<int>(Allocator.Temp);
         NativeList<int> closedList = new NativeList<int>(Allocator.Temp);
-        
-        SetSize(0);
-        SetMaxsize(gridSize.x*gridSize.y-1);
-        openList.Add(0);
 
-        //openList.Add(startNode.index);
-        insert(startNode.index, openList, pathNodeArray);
+        openList.Add(startNode.index);
 
         while (openList.Length > 0){
-            
-
             //TODO Heap Optimize this code
-            //*Will use min Priority Heap, will peek minimum and make sure lowere than top openList int for pathArray
-            //* remove this openList min value  
+            //* In GetLowestCostFNodeIndex have reference to Min. Heap where will go through tree top to bottom down, left to right (faster than array search)
             int currentNodeIndex = GetLowestCostFNodeIndex(openList, pathNodeArray);
             PathNode currentNode = pathNodeArray[currentNodeIndex];
-        
             if (currentNodeIndex == endNodeIndex){
                 //Reach Destination
                 break;
             }
 
-            
-             for (int i =0; i < openList.Length; i++){
+            //Remove current node from Open List
+            //* Could this be simplified to if openList[currentNodeIndex] == currentNode or do Max. Heap search as faster
+            for (int i =0; i < openList.Length; i++){
                 if (openList[i] == currentNodeIndex){
                     openList.RemoveAtSwapBack(i);   
                     break;
                 }
             }
-
 
             closedList.Add(currentNodeIndex);
 
@@ -184,40 +163,49 @@ public class PathfindingChange : MonoBehaviour
                     pathNodeArray[neighbourNodeIndex] = neighbourNode;
 
                     if (!openList.Contains(neighbourNode.index)){
-                        insert(neighbourNode.index, openList, pathNodeArray);
+                        openList.Add(neighbourNode.index);
                     }
                 }
             }
         }
 
+        pathPositionBuffer.Clear();
+
         PathNode endNode = pathNodeArray[endNodeIndex];
 
         if (endNode.cameFromNodeIndex == -1){
             //Didn't find path
+            pathFollowComponentDataFromEntity[entity] = new PathFollow{pathIndex = -1};
         }else{
             //Found Path
-            NativeList<int2> path = CalculatePath(pathNodeArray, endNode);
-
-            //!Does not work in burst fyi
-            
-            foreach(int2 pathPosition in path){
-                UnityEngine.Debug.Log(pathPosition);
-            }
-            
-
-            path.Dispose();
+            CalculatePath(pathNodeArray, endNode, pathPositionBuffer);
+            pathFollowComponentDataFromEntity[entity] = new PathFollow{pathIndex = pathPositionBuffer.Length-1};
         }
 
         pathNodeArray.Dispose();
         neighbourOffsetArray.Dispose();
         openList.Dispose();
         closedList.Dispose();
-        
         }
 
 
 
-        //Functions for A* Algorithm
+        private void CalculatePath (NativeArray<PathNode> pathNodeArray, PathNode endNode, DynamicBuffer<PathPosition> pathPositionBuffer){
+            if (endNode.cameFromNodeIndex == -1){
+                //Didn't find path
+            }else{
+                //Found Path
+                //Retrace Path (Path is inverted)
+                pathPositionBuffer.Add(new PathPosition{position = new int2(endNode.x, endNode.y)});
+
+                PathNode currentNode = endNode;
+                while (currentNode.cameFromNodeIndex != -1){
+                    PathNode cameFromNode = pathNodeArray[currentNode.cameFromNodeIndex];
+                    pathPositionBuffer.Add(new PathPosition{position = new int2(cameFromNode.x, cameFromNode.y)});
+                    currentNode = cameFromNode;
+                }
+            }
+        }
         private NativeList<int2> CalculatePath (NativeArray<PathNode> pathNodeArray, PathNode endNode){
         if (endNode.cameFromNodeIndex == -1){
             //Didn't find path
@@ -238,6 +226,7 @@ public class PathfindingChange : MonoBehaviour
             return path;
         }
     }
+
     private bool IsPostionInsideGrid(int2 gridPosition, int2 gridSize){
         return 
         gridPosition.x >= 0 && 
@@ -258,174 +247,56 @@ public class PathfindingChange : MonoBehaviour
     }
 
     private int GetLowestCostFNodeIndex(NativeList<int> openList, NativeArray<PathNode> pathNodeArray){
-        PathNode lowestCostPathNode = pathNodeArray[openList[FRONT]];
-        PathNode testPathNode = pathNodeArray[getMin(openList)];
+        PathNode lowestCostPathNode = pathNodeArray[openList[0]];
+        for (int i = 1; i< openList.Length; i++){
+            PathNode testPathNode = pathNodeArray[openList[i]];
             if (testPathNode.fCost < lowestCostPathNode.fCost){
                 lowestCostPathNode = testPathNode;
             }
-    
+        }
         return lowestCostPathNode.index;
-    }
-
-        //Minimum Priority Heap Logic
-        static void SetSize(int sizeValue){
-            size = sizeValue;
         }
 
-        static void SetMaxsize(int maxsizeValue){
-            maxsize = maxsizeValue;
+
+
+    //Node struct for reference with A* algorithm
+    private struct PathNode{
+        public int x;
+        public int y;
+
+        public int index;
+
+        public int gCost;
+        public int hCost;
+        public int fCost;
+
+        public bool isWalkable;
+        public int cameFromNodeIndex;
+
+        public void CalculateFCost(){
+            fCost = gCost + hCost;
         }
-        
-        // Function to return the index of the
-        // parent node of a given node
-        static int parent(int i)
-        {
-            return (i) / 2;
+
+        public void SetIsWalkable(bool isWalkable){
+            this.isWalkable = isWalkable;
         }
-        
-        // Function to return the index of the
-        // left child of the given node
-        static int leftChild(int i)
-        {
-            return ((2 * i));
-        }
-        
-        // Function to return the index of the
-        // right child of the given node
-        static int rightChild(int i)
-        {
-            return ((2 * i) + 1);
-        }
-        
-    // Method 4
-        // Returning true if the passed
-        // node is a leaf node
-        private bool isLeaf(int pos)
-        {
-    
-            if (pos > (size / 2)) {
-                return true;
+
+        public int HeapIndex{
+            get{
+                return HeapIndex;
             }
-    
-            return false;
-        }
-        
-        // Method 5
-        // To swap two nodes of the heap
-        private void swap(int fpos, int spos, NativeList<int> H)
-        {
-    
-            int tmp;
-            tmp = H[fpos];
-    
-            H[fpos] = H[spos];
-            H[spos] = tmp;
-        }
-        
-        // Method 6
-        // To heapify the node at pos
-    private void minHeapify(int pos, NativeList<int> H, NativeArray<PathNode> pathNodeArray)
-    {     
-        if(!isLeaf(pos)){
-            
-        //swap with the minimum of the two children
-        int swapPos = GetFCost(pathNodeArray,H[leftChild(pos)]) < GetFCost(pathNodeArray,H[rightChild(pos)]) ? leftChild(pos):rightChild(pos);
-            
-        if(GetFCost(pathNodeArray,H[pos]) > GetFCost(pathNodeArray,H[leftChild(pos)])  || GetFCost(pathNodeArray,H[pos]) > GetFCost(pathNodeArray,H[rightChild(pos)])){
-            swap(pos,swapPos, H);
-            minHeapify(swapPos, H, pathNodeArray);
-        }
-            
-        }      
-    }
-        
-        // Method 7
-        // To insert a node into the heap
-        private void insert(int element, NativeList<int> H, NativeArray<PathNode> pathNodeArray)
-        {
-    
-            if (size >= maxsize) {
-                return;
-            }
-            H.Add(element);
-            H[++size] = element;
-            int current = size;
-    
-            while (GetFCost(pathNodeArray,H[current]) < GetFCost(pathNodeArray,H[parent(current)])) {
-                swap(current, parent(current), H);
-                current = parent(current);
-            }
-        }
-        
-        // Method 8
-        // To print the contents of the heap
-        public void print(NativeArray<int> values, NativeList<int> H)
-        {
-            for (int i = 0; i < H.Length; i++) {
-    
-                // Printing the parent and both childrens
-                UnityEngine.Debug.Log(" LISTING : " + H[i]);
+            set{
+                HeapIndex = value;
             }
         }
 
-        private void printTree(NativeArray<PathNode> pathNodeArray,NativeList<int> H)
-        {
-            for (int i = 1; i <= size / 2; i++) {
-    
-                // Printing the parent and both childrens
-                UnityEngine.Debug.Log(
-                    " PARENT : " + GetFCost(pathNodeArray,H[i])
-                    + " LEFT CHILD : " + GetFCost(pathNodeArray,H[2 * i])
-                    + " RIGHT CHILD :" + GetFCost(pathNodeArray,H[2 * i + 1]));
-
+        public int CompareTo(PathNode nodeToCompare){
+            int compare = fCost.CompareTo(nodeToCompare.fCost);
+            if(compare==0){
+                compare = hCost.CompareTo(nodeToCompare.hCost);
             }
+            return -compare;
         }
-        
-        // Method 9
-        // To remove and return the minimum
-        // element from the heap
-        private int remove(NativeList<int> H, NativeArray<PathNode> pathNodeArray)
-        {
-            int popped = H[FRONT];
-            H[FRONT] = H[size--];
-
-            minHeapify(FRONT, H, pathNodeArray);
-    
-            return popped;
-        }
-
-        public int getMin(NativeList<int> H)
-        {
-            return H[FRONT];
-        }
-
-        static int GetFCost(NativeArray<PathNode> pathNodeArray,int index){
-            int fCost = pathNodeArray[index].fCost;
-            return fCost;
-        }
-
-        //Node struct for reference with A* algorithm
-        private struct PathNode{
-            public int x;
-            public int y;
-
-            public int index;
-
-            public int gCost;
-            public int hCost;
-            public int fCost;
-
-            public bool isWalkable;
-            public int cameFromNodeIndex;
-
-            public void CalculateFCost(){
-                fCost = gCost + hCost;
-            }
-
-            public void SetIsWalkable(bool isWalkable){
-                this.isWalkable = isWalkable;
-            }
-
         }
     }
         
