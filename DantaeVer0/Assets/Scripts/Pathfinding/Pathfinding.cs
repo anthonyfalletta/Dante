@@ -10,6 +10,7 @@ public class Pathfinding : MonoBehaviour
 	//PathRequestManager requestManager;
 	NodeGrid grid;
 	public Transform target;
+	public bool simplifyPath;
 	
 	void Awake() {
 		//requestManager = GetComponent<PathRequestManager>();
@@ -82,14 +83,22 @@ public class Pathfinding : MonoBehaviour
 			currentNode = currentNode.parent;
 		}
 
-		List<Vector3[]> waypointsTemp = new List<Vector3[]>();
-		
-		Vector3[] waypoints = SimplifyPath(path);
-
+		//List<Vector3[]> waypointsTemp = new List<Vector3[]>();
+		if (simplifyPath){
+			Vector3[] waypoints = SimplifyPath(path);
+			Array.Reverse(waypoints);
+			return waypoints;
+		}
+		else
+		{
+			Vector3[] waypoints = ReturnPath(path);
+			Array.Reverse(waypoints);
+			return waypoints;
+		}
 		//Add target position to waypoints at first or 0 position to go all the way to player
 
-		Array.Reverse(waypoints);
-		return waypoints;
+		//Array.Reverse(waypoints);
+		//return waypoints;
 		
 	}
 	
@@ -107,6 +116,20 @@ public class Pathfinding : MonoBehaviour
 				waypoints.Add(path[i].worldPosition);
 			}
 			directionOld = directionNew;
+		}	
+		return waypoints.ToArray();
+	}
+
+	Vector3[] ReturnPath(List<Node> path) {
+		List<Vector3> waypoints = new List<Vector3>();
+		Vector2 directionOld = Vector2.zero;
+		
+		//Add player postion to path
+		//TODO: Setup better structure in scripts to get player positon
+		waypoints.Add(target.position);
+
+		for (int i = 1; i < path.Count; i ++) {
+				waypoints.Add(path[i].worldPosition);
 		}	
 		return waypoints.ToArray();
 	}

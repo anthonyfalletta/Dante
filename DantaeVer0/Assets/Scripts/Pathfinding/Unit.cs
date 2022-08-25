@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 
 public class Unit : MonoBehaviour
 {
-	const float minPathUpdateTIme = 0.2f; 
-	const float pathUpdateMoveThreshold = 0.5f;
+	const float minPathUpdateTIme = 0.25f; 
+	const float pathUpdateMoveThreshold = 1.0f;
 
 	public Transform target;
 	public float speed = 20;
@@ -40,13 +40,18 @@ public class Unit : MonoBehaviour
 			path = newPath;
 			//targetIndex = 0;
 			StopCoroutine("FollowPath");
+			StopCoroutine("FollowPath");
+			StopCoroutine("FollowPath");
+			StopCoroutine("FollowPath");
+			StopCoroutine("FollowPath");
 			StartCoroutine("FollowPath");
 		}
 	}
 
 	IEnumerator FollowPath() {
 		Vector3 currentWaypoint = path[0];
-
+		targetIndex = 0;
+		
 		while (true) {
 			if (transform.position == currentWaypoint) {
 				targetIndex ++;
@@ -56,6 +61,7 @@ public class Unit : MonoBehaviour
 					yield break;
 				}
 				currentWaypoint = path[targetIndex];
+				Debug.Log("Current Waypoint:" + currentWaypoint);
 			}
 
 			//Unit Direction Towards Waypoints
@@ -82,13 +88,13 @@ public class Unit : MonoBehaviour
 		if (path != null) {
 			for (int i = targetIndex; i < path.Length; i ++) {
 				Gizmos.color = Color.black;
-				Gizmos.DrawCube(path[i], new Vector3(1,1,5));
+				Gizmos.DrawCube(new Vector3(path[i].x,path[i].y,-5), new Vector3(1,1,-5));
 
 				if (i == targetIndex) {
-					Gizmos.DrawLine(transform.position, path[i]);
+					Gizmos.DrawLine(new Vector3(transform.position.x,transform.position.y,-5), new Vector3(path[i].x, path[i].y,-5));
 				}
 				else {
-					Gizmos.DrawLine(path[i-1],path[i]);
+					Gizmos.DrawLine(new Vector3(path[i-1].x,path[i-1].y,-5),new Vector3(path[i].x, path[i].y,-5));
 				}
 			}
 		}
