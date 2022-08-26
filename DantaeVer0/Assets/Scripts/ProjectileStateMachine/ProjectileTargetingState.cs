@@ -34,7 +34,7 @@ public class ProjectileTargetingState : ProjectileBaseState
     {
         if (Ctx.IsCollision == null)
        {
-        Ctx.ProjectileGO.transform.position = Vector2.MoveTowards(Ctx.ProjectileGO.transform.position, Ctx.TargetPos, 2.0f*Time.deltaTime);
+        Ctx.ProjectileGO.transform.position = Vector2.MoveTowards(Ctx.ProjectileGO.transform.position, Ctx.TargetPos, 8.0f*Time.deltaTime);
         //*Debug.Log("TargetPosition: " + Ctx.TargetPos);
         //*Debug.Log("Magnitude: " + (Ctx.ProjectileGO.transform.position + Ctx.TargetPos).magnitude);
 

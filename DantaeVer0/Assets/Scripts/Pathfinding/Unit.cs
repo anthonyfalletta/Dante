@@ -6,6 +6,7 @@ public class Unit : MonoBehaviour
 {
 	const float minPathUpdateTIme = 0.25f; 
 	const float pathUpdateMoveThreshold = 1.0f;
+	public bool followPath;
 
 	public Transform target;
 	public float speed = 20;
@@ -13,14 +14,33 @@ public class Unit : MonoBehaviour
 	int targetIndex;
 
 	void Start() {
+		//TODO Implement toggle method for follow path where when true call startCoroutine and false calls stopCoroutine
+		if (target == null){
+			target = GameObject.Find("Player").transform;
+		}
+		ToggleUnitFollow();
+	}
+
+   public void ToggleUnitFollow(){
+	if(!followPath){
+		followPath = true;
 		StartCoroutine(UpdatePath());
 	}
+	else if(followPath)
+	{
+		StopCoroutine(UpdatePath());
+		followPath = false;
+	}
+   }
 
    IEnumerator UpdatePath(){
 		if(Time.timeSinceLevelLoad < 0.3f){
 			yield return new WaitForSeconds(0.3f);
 		}
-		PathRequestManager.RequestPath(new PathRequest(transform.position, target.position, OnPathFound));
+		if (followPath){
+			PathRequestManager.RequestPath(new PathRequest(transform.position, target.position, OnPathFound));
+		}
+		
 
 		float sqrMoveThreshold = pathUpdateMoveThreshold * pathUpdateMoveThreshold;
 		Vector3 targetPosOld = target.position;
@@ -29,7 +49,9 @@ public class Unit : MonoBehaviour
 		yield return new WaitForSeconds (minPathUpdateTIme);
 
 		if ((target.position-targetPosOld).sqrMagnitude > sqrMoveThreshold){
-			PathRequestManager.RequestPath(new PathRequest(transform.position,target.position, OnPathFound));
+			if(followPath){
+				PathRequestManager.RequestPath(new PathRequest(transform.position,target.position, OnPathFound));
+			}
 			targetPosOld = target.position;
 		}	
 	}
@@ -51,7 +73,7 @@ public class Unit : MonoBehaviour
 	IEnumerator FollowPath() {
 		Vector3 currentWaypoint = path[0];
 		targetIndex = 0;
-		
+
 		while (true) {
 			if (transform.position == currentWaypoint) {
 				targetIndex ++;
@@ -61,7 +83,7 @@ public class Unit : MonoBehaviour
 					yield break;
 				}
 				currentWaypoint = path[targetIndex];
-				Debug.Log("Current Waypoint:" + currentWaypoint);
+				//Debug.Log("Current Waypoint:" + currentWaypoint);
 			}
 
 			//Unit Direction Towards Waypoints

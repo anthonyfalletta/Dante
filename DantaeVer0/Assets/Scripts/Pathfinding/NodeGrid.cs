@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class NodeGrid : MonoBehaviour
 {
@@ -34,8 +35,18 @@ public class NodeGrid : MonoBehaviour
 		}
 
 		CreateGrid();
+
+		LoadingLayer loadingLayer = GameObject.Find("GameManager").GetComponent<LoadingLayer>();
+		loadingLayer.OnReloadGrid += Event_OnReloadGrid; 
 	}
 
+	private void Event_OnReloadGrid(object sender, EventArgs e){
+		Debug.Log("Reload Grid");
+		//Setting grid to null doesn't seem to be necessary
+		grid = null;
+		CreateGrid();
+	}
+	
 	public int MaxSize {
 		get {
 			return gridSizeX * gridSizeY;
@@ -49,7 +60,7 @@ public class NodeGrid : MonoBehaviour
 		for (int x = 0; x < gridSizeX; x ++) {
 			for (int y = 0; y < gridSizeY; y ++) {
 				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.up * (y * nodeDiameter + nodeRadius);
-				bool walkable = !(Physics.CheckSphere(worldPoint,nodeRadius,unwalkableMask));
+				bool walkable = !(Physics.CheckSphere(worldPoint,nodeRadius,unwalkableMask)) && !(Physics2D.OverlapCircle(worldPoint,nodeRadius,unwalkableMask));
 
 				int movementPenalty = 0;
 

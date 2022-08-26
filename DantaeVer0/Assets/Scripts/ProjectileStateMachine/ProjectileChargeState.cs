@@ -46,9 +46,9 @@ public class ProjectileChargeState : ProjectileBaseState
 
     void PerformCharge()
     {
-        if (Ctx.ShootingDistance <= 2.0f)
+        if (Ctx.ShootingDistance <= 8.0f)
         {
-            Ctx.ShootingDistance += 1.25f * Time.deltaTime;
+            Ctx.ShootingDistance += 2.0f * Time.deltaTime;
         }  
         Ctx.RaycastPos =  new Vector2(Ctx.PlayerGO.transform.position.x,Ctx.PlayerGO.transform.position.y) + (Ctx.ShootingPos * Ctx.ShootingDistance);
 

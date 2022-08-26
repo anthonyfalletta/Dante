@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 351754147}
   - component: {fileID: 351754146}
   - component: {fileID: 351754148}
-  m_Layer: 8
+  m_Layer: 12
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1355,7 +1355,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07a1e38805e36314885559a1b488d907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  followPath: 0
   target: {fileID: 1620086000}
+  speed: 5
 --- !u!1 &1554523875
 GameObject:
   m_ObjectHideFlags: 0
@@ -3476,7 +3478,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 16384
     terrainPenalty: 0
-  obstacleProximityPenalty: 25
+  obstacleProximityPenalty: 5
 --- !u!114 &1791479881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3502,6 +3504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1620086000}
+  simplifyPath: 0
 --- !u!1 &2023932602
 GameObject:
   m_ObjectHideFlags: 0

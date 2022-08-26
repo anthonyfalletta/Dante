@@ -31,7 +31,7 @@ public class PlayerDashState : PlayerBaseState
 
     void StartDash()
     {
-        Ctx.DashSpeed = 100f;
+        Ctx.DashSpeed = 600f;
     }
 
     void PerformDash()
@@ -43,9 +43,9 @@ public class PlayerDashState : PlayerBaseState
 
     private void DashSpeedSlowdown()
     {
-        Ctx.DashSpeed -= Ctx.DashSpeed * 2.5f * Time.deltaTime;
+        Ctx.DashSpeed -= Ctx.DashSpeed * 5.0f * Time.deltaTime;
 
-        if(Ctx.DashSpeed < 20f)
+        if(Ctx.DashSpeed < 150f)
         {
             SwitchState(Factory.Move());
         }
