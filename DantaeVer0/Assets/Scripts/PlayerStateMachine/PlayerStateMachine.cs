@@ -9,6 +9,9 @@ public class PlayerStateMachine : MonoBehaviour
     PlayerBaseState _currentState;
     PlayerStateFactory _states;
 
+    //!
+    public CharacterStat Speed;
+
     //Optimized Animation variables
     int _isMovingHash;
     int _isDashingHash;
@@ -94,6 +97,9 @@ public class PlayerStateMachine : MonoBehaviour
         _projectilePrefab = (GameObject)Resources.Load("Projectile");
         _attackPrefab = (GameObject)Resources.Load("AttackSwipeField");
         _lastMovementInputValue = new Vector2(0,-1);
+
+        //!
+        Speed.BaseValue = 100f;
 
     }
 

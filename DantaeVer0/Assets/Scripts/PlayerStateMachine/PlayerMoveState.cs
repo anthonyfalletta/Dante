@@ -50,7 +50,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     void PerformMovement()
     {
-        Ctx.PlayerRb.velocity = Ctx.MovementInputValue.normalized * 100f * Time.deltaTime;
+        Ctx.PlayerRb.velocity = Ctx.MovementInputValue.normalized * Ctx.Speed.Value * Time.deltaTime;
     }
 
     
