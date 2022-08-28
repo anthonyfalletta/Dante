@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerAttackState : PlayerBaseState
 {
-    public PlayerAttackState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
-    :base(currentContext, playerStateFactory){
+    public PlayerAttackState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat statContext)
+    :base(currentContext, playerStateFactory, statContext){
         IsRootState = true;
         InitializeSubState();
     }

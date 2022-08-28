@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerMoveState : PlayerBaseState
 {
-    public PlayerMoveState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
-    :base(currentContext, playerStateFactory){
+    public PlayerMoveState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat statContext)
+    :base(currentContext, playerStateFactory, statContext){
         IsRootState = true;
         InitializeSubState();
     }
@@ -50,7 +50,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     void PerformMovement()
     {
-        Ctx.PlayerRb.velocity = Ctx.MovementInputValue.normalized * Ctx.Speed.Value * Time.deltaTime;
+        Ctx.PlayerRb.velocity = Ctx.MovementInputValue.normalized * Stat.Speed.Value * Time.deltaTime;
     }
 
     

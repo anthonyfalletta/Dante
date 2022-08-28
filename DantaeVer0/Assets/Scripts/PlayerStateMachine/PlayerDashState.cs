@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerDashState : PlayerBaseState
 {
-    public PlayerDashState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
-    :base(currentContext, playerStateFactory){
+    public PlayerDashState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat statContext)
+    :base(currentContext, playerStateFactory, statContext){
         IsRootState = true;
         InitializeSubState();
     }
@@ -37,15 +37,15 @@ public class PlayerDashState : PlayerBaseState
     void PerformDash()
     {
         Vector2 dashDir = Ctx.MovementInputValue.normalized;
-        Ctx.PlayerRb.velocity = dashDir * Ctx.DashSpeed * Time.deltaTime;
+        Ctx.PlayerRb.velocity = dashDir * Stat.DashSpeed.Value * Time.deltaTime;
         DashSpeedSlowdown();
     }
 
     private void DashSpeedSlowdown()
     {
-        Ctx.DashSpeed -= Ctx.DashSpeed * 5.0f * Time.deltaTime;
+        Ctx.DashSpeed -= Ctx.DashSpeed * Stat.DashDecrease.Value * Time.deltaTime;
 
-        if(Ctx.DashSpeed < 150f)
+        if(Ctx.DashSpeed < Stat.DashDuration.Value)
         {
             SwitchState(Factory.Move());
         }

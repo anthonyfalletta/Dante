@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.ObjectModel;
 
 public class PlayerStateMachine : MonoBehaviour
 {
     //State Variables
+    
     PlayerBaseState _currentState;
     PlayerStateFactory _states;
+    PlayerStat _stat;
 
     //!
-    public CharacterStat Speed;
+    //public CharacterStat Speed;
 
     //Optimized Animation variables
     int _isMovingHash;
@@ -76,8 +79,10 @@ public class PlayerStateMachine : MonoBehaviour
         //Setup Optimized Hash Animations
         AnimationHashing();
         
+        _stat = this.GetComponent<PlayerStat>();
+
         //Setup State
-        _states = new PlayerStateFactory(this);
+        _states = new PlayerStateFactory(this, _stat);
         _currentState = _states.Idle();
         _currentState.EnterState();
 
@@ -99,7 +104,7 @@ public class PlayerStateMachine : MonoBehaviour
         _lastMovementInputValue = new Vector2(0,-1);
 
         //!
-        Speed.BaseValue = 100f;
+        //Speed.BaseValue = 100f;
 
     }
 
@@ -108,7 +113,7 @@ public class PlayerStateMachine : MonoBehaviour
     {
         HandleMoveAnimation();
         _currentState.UpdateStates();
-        Debug.Log("Current State: " + _currentState);
+        Debug.Log("Current State: " + CurrentState);
     }
 
     void FixedUpdate() {
