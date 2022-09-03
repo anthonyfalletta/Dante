@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerMoveState : PlayerBaseState
 {
+    public static Action moveInput;
+    public static Action velocityZero;
     public PlayerMoveState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat statContext)
     :base(currentContext, playerStateFactory, statContext){
         IsRootState = true;
@@ -14,7 +17,6 @@ public class PlayerMoveState : PlayerBaseState
         StartMovement();
     }
     public override void UpdateState(){
-        //bool isWalking = Ctx.Animator.GetBool("isMoving");
         CheckSwitchStates();  
     }
 
@@ -23,11 +25,11 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void ExitState(){
         Ctx.Animator.SetBool(Ctx.IsMovingHash, false);
-        Ctx.PlayerRb.velocity = Vector2.zero;
+        velocityZero?.Invoke();
     }
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        if (Ctx.IsDashPressed)
+        if (Ctx.IsDashPressed && Stat.dashEnable)
         {
             SwitchState(Factory.Dash());
         }
@@ -50,7 +52,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     void PerformMovement()
     {
-        Ctx.PlayerRb.velocity = Ctx.MovementInputValue.normalized * Stat.Speed.Value * Time.deltaTime;
+        moveInput?.Invoke();
     }
 
     

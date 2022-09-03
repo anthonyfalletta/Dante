@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerAttackState : PlayerBaseState
 {
+    public static Action attackInput;
     public PlayerAttackState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat statContext)
     :base(currentContext, playerStateFactory, statContext){
         IsRootState = true;
@@ -34,16 +36,6 @@ public class PlayerAttackState : PlayerBaseState
 
     void PerformAttack()
     {
-        float angle = Mathf.Atan2(Ctx.MovementInputValue.normalized.y,Ctx.MovementInputValue.normalized.x) * Mathf.Rad2Deg;
-        Quaternion attackRotation = Quaternion.Euler(new Vector3(0,0,angle));
-        Vector3 attackPosition = Ctx.PlayerGO.transform.position + (new Vector3(Ctx.MovementInputValue.x,Ctx.MovementInputValue.y,0).normalized * 0.1f);
-        Ctx.AttackResetRoutine = Ctx.StartCoroutine((IAttackSwipe(attackPosition, attackRotation)));
-    }
-
-    IEnumerator IAttackSwipe(Vector3 position, Quaternion rotation)
-    {
-        Debug.Log("IAttackSwipe Script Running");
-        Ctx.InstantiateAttackGameObject();
-        yield return new WaitForSeconds(2f);
+        attackInput?.Invoke();
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerShootState : PlayerBaseState
 {
+    public static Action createProjectile;
     public PlayerShootState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat statContext)
     :base(currentContext, playerStateFactory, statContext){
         IsRootState = true;
@@ -29,7 +31,8 @@ public class PlayerShootState : PlayerBaseState
 
     void StartShoot()
     {
-        Ctx.InstantiateProjectile();
+        //Ctx.InstantiateProjectile();
+        createProjectile?.Invoke();
     }
 
     void PerformShoot()

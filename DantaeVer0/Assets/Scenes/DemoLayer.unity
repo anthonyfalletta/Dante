@@ -2555,7 +2555,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1324109642
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -12224,7 +12224,6 @@ GameObject:
   - component: {fileID: 1620086009}
   - component: {fileID: 1620086012}
   - component: {fileID: 1620086004}
-  - component: {fileID: 1620086005}
   - component: {fileID: 1620086006}
   m_Layer: 10
   m_Name: Player
@@ -12468,22 +12467,15 @@ MonoBehaviour:
     BaseValue: 0
   DashSpeed:
     BaseValue: 0
+  DashDefaultSpeed:
+    BaseValue: 0
   DashDecrease:
     BaseValue: 0
   DashDuration:
     BaseValue: 0
---- !u!114 &1620086005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1620085998}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e136c78e85d1d841bb70c98e1fe64ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  DashCooldown:
+    BaseValue: 0
+  dashEnable: 0
 --- !u!114 &1620086006
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -6,6 +6,7 @@ public class PlayerStat : MonoBehaviour
 {
     public CharacterStat Speed;
     public CharacterStat DashSpeed;
+    public CharacterStat DashDefaultSpeed;
     public CharacterStat DashDecrease;
     public CharacterStat DashDuration;
     public CharacterStat DashCooldown;
@@ -13,9 +14,11 @@ public class PlayerStat : MonoBehaviour
 
     private void Start() {
        Speed.BaseValue = 100f;
-       DashSpeed.BaseValue = 200f;
-       DashDecrease.BaseValue = 1.0f;
-       DashDuration.BaseValue = 150f;
+       DashSpeed.BaseValue = 400f;
+       DashDefaultSpeed.BaseValue = DashSpeed.Value;
+       DashDecrease.BaseValue = 2.0f;
+       DashDuration.BaseValue = 200f;
+       DashCooldown.BaseValue = 1.0f;
        dashEnable = true;
        //ClassShoot.BaseValue = (float)ClassType.Default;
 

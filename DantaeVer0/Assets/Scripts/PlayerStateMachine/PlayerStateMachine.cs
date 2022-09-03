@@ -138,7 +138,6 @@ public class PlayerStateMachine : MonoBehaviour
         {
             _lastMovementInputValue = _movementInputValue;
         }
-        //Debug.Log("MOVE Button Is Pressed");
     }
 
     public void HandleMoveAnimation()
