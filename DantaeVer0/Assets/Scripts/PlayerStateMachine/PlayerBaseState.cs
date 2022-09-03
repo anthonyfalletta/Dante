@@ -50,7 +50,7 @@
         }
     }
 
-    protected void SwitchState(PlayerBaseState newState){
+    public void SwitchState(PlayerBaseState newState){
         //current state exits state
         ExitState();
 

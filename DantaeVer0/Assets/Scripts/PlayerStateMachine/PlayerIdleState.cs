@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerIdleState : PlayerBaseState
 {
@@ -14,6 +15,8 @@ public class PlayerIdleState : PlayerBaseState
     }
     public override void UpdateState(){
         CheckSwitchStates();
+        if (Keyboard.current.spaceKey.wasReleasedThisFrame && Stat.Speed.Value == 100f){Stat.Speed.BaseValue = 500f;}
+        else if(Keyboard.current.spaceKey.wasReleasedThisFrame && Stat.Speed.Value == 500f){Stat.Speed.BaseValue = 100f;}
     }
 
     public override void FixedUpdateState(){}

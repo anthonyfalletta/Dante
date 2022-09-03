@@ -12224,6 +12224,8 @@ GameObject:
   - component: {fileID: 1620086009}
   - component: {fileID: 1620086012}
   - component: {fileID: 1620086004}
+  - component: {fileID: 1620086005}
+  - component: {fileID: 1620086006}
   m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
@@ -12464,6 +12466,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed:
     BaseValue: 0
+  DashSpeed:
+    BaseValue: 0
+  DashDecrease:
+    BaseValue: 0
+  DashDuration:
+    BaseValue: 0
+--- !u!114 &1620086005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620085998}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e136c78e85d1d841bb70c98e1fe64ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1620086006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620085998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 205391953ff43d345afc2a48ce6365b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!95 &1620086009
 Animator:
   serializedVersion: 3

@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerDashState : PlayerBaseState
 {
+    public static Action dashInput;
+    public static Action dashReset;
+
     public PlayerDashState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat statContext)
     :base(currentContext, playerStateFactory, statContext){
         IsRootState = true;
@@ -31,23 +35,11 @@ public class PlayerDashState : PlayerBaseState
 
     void StartDash()
     {
-        Ctx.DashSpeed = 600f;
+        dashReset?.Invoke();
     }
 
     void PerformDash()
     {
-        Vector2 dashDir = Ctx.MovementInputValue.normalized;
-        Ctx.PlayerRb.velocity = dashDir * Stat.DashSpeed.Value * Time.deltaTime;
-        DashSpeedSlowdown();
-    }
-
-    private void DashSpeedSlowdown()
-    {
-        Ctx.DashSpeed -= Ctx.DashSpeed * Stat.DashDecrease.Value * Time.deltaTime;
-
-        if(Ctx.DashSpeed < Stat.DashDuration.Value)
-        {
-            SwitchState(Factory.Move());
-        }
+        dashInput?.Invoke();
     }
 }

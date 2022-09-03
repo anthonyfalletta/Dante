@@ -47,6 +47,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     //Getters & Setters
     public PlayerBaseState CurrentState{get{return _currentState;} set{_currentState = value;}}
+    public PlayerStateFactory States{get{return _states;} set{_states = value;}}
 
     public int IsMovingHash{get{return _isMovingHash;} set{_isMovingHash = value;}}
     public int IsDashingHash{get{return _isDashingHash;} set{_isDashingHash = value;}}
@@ -114,6 +115,8 @@ public class PlayerStateMachine : MonoBehaviour
         HandleMoveAnimation();
         _currentState.UpdateStates();
         Debug.Log("Current State: " + CurrentState);
+
+         
     }
 
     void FixedUpdate() {
