@@ -5,18 +5,15 @@ using UnityEngine.InputSystem;
 
 public class PlayerIdleState : PlayerBaseState
 {
-    public PlayerIdleState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat statContext)
-    :base(currentContext, playerStateFactory, statContext){
+    public PlayerIdleState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
+    :base(currentContext, playerStateFactory){
         IsRootState = true;
         InitializeSubState();
     }
     public override void EnterState(){
-        StartIdle();
     }
     public override void UpdateState(){
         CheckSwitchStates();
-        if (Keyboard.current.spaceKey.wasReleasedThisFrame && Stat.Speed.Value == 100f){Stat.Speed.BaseValue = 500f;}
-        else if(Keyboard.current.spaceKey.wasReleasedThisFrame && Stat.Speed.Value == 500f){Stat.Speed.BaseValue = 100f;}
     }
 
     public override void FixedUpdateState(){}
@@ -25,24 +22,19 @@ public class PlayerIdleState : PlayerBaseState
 
     }
     public override void CheckSwitchStates(){
-        if (Ctx.IsMovePressed)
+        if (Ctx.Input.IsMovePressed)
         {
             SwitchState(Factory.Move());
         }
-        else if (Ctx.IsShootPressed){
+        else if (Ctx.Input.IsShootPressed){
             SwitchState(Factory.Shoot());
         }
-        else if (Ctx.IsAttackPressed){
+        else if (Ctx.Input.IsAttackPressed){
             SwitchState(Factory.Attack());
         }
-        else if (Ctx.IsSpecialPressed)
+        else if (Ctx.Input.IsSpecialPressed)
         {
             SwitchState(Factory.Special());
         }
-    }
-
-    void StartIdle()
-    {
-        
     }
 }

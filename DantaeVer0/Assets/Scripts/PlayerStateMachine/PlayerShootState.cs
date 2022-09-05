@@ -6,13 +6,13 @@ using System;
 public class PlayerShootState : PlayerBaseState
 {
     public static Action createProjectile;
-    public PlayerShootState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat statContext)
-    :base(currentContext, playerStateFactory, statContext){
+    public PlayerShootState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
+    :base(currentContext, playerStateFactory){
         IsRootState = true;
         InitializeSubState();
     }
     public override void EnterState(){
-        StartShoot();
+        createProjectile?.Invoke();
     }
     public override void UpdateState(){
         CheckSwitchStates();
@@ -24,24 +24,8 @@ public class PlayerShootState : PlayerBaseState
     }
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        if (!Ctx.IsShootPressed){
+        if (!Ctx.Input.IsShootPressed){
             SwitchState(Factory.Idle());
         }
-    }
-
-    void StartShoot()
-    {
-        //Ctx.InstantiateProjectile();
-        createProjectile?.Invoke();
-    }
-
-    void PerformShoot()
-    {
-
-    }
-
-    private void ExitShoot()
-    {
-   
     }
 }

@@ -3,19 +3,16 @@
     private bool _isRootState = false;
     private PlayerStateMachine _ctx;
     private PlayerStateFactory _factory;
-    private PlayerStat _stat;
     private PlayerBaseState _currentSubState;
     private PlayerBaseState _currentSuperState;
 
     protected bool IsRootState{set{_isRootState=value;}}
     protected PlayerStateMachine Ctx{get{return _ctx;}}
     protected PlayerStateFactory Factory{get{return _factory;}}
-    protected PlayerStat Stat{get{return _stat;}}
     
-    public PlayerBaseState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory, PlayerStat playerStat){
+    public PlayerBaseState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory){
         _ctx = currentContext;
         _factory = playerStateFactory;
-        _stat = playerStat;
     }
     public abstract void EnterState();
     public abstract void UpdateState();

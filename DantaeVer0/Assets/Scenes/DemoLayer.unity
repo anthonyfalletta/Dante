@@ -12225,6 +12225,9 @@ GameObject:
   - component: {fileID: 1620086012}
   - component: {fileID: 1620086004}
   - component: {fileID: 1620086006}
+  - component: {fileID: 1620086005}
+  - component: {fileID: 1620086007}
+  - component: {fileID: 1620086008}
   m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
@@ -12373,7 +12376,7 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1620086012}
+      - m_Target: {fileID: 1620086005}
         m_MethodName: OnMoveButton
         m_Mode: 0
         m_Arguments:
@@ -12388,7 +12391,7 @@ MonoBehaviour:
     m_ActionName: Combat/Movement[/DualShock4GamepadHID/leftStick,/DualShock4GamepadHID/leftStick]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1620086012}
+      - m_Target: {fileID: 1620086005}
         m_MethodName: OnShootButton
         m_Mode: 0
         m_Arguments:
@@ -12403,7 +12406,7 @@ MonoBehaviour:
     m_ActionName: Combat/Shooting[/DualShock4GamepadHID/buttonWest,/DualShock4GamepadHID/buttonWest]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1620086012}
+      - m_Target: {fileID: 1620086005}
         m_MethodName: OnDashButton
         m_Mode: 0
         m_Arguments:
@@ -12418,7 +12421,7 @@ MonoBehaviour:
     m_ActionName: Combat/Dashing[/DualShock4GamepadHID/buttonSouth,/DualShock4GamepadHID/buttonSouth]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1620086012}
+      - m_Target: {fileID: 1620086005}
         m_MethodName: OnAttackButton
         m_Mode: 0
         m_Arguments:
@@ -12433,7 +12436,7 @@ MonoBehaviour:
     m_ActionName: Combat/Attacking[/DualShock4GamepadHID/buttonEast,/DualShock4GamepadHID/buttonEast]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1620086012}
+      - m_Target: {fileID: 1620086005}
         m_MethodName: OnSpecialButton
         m_Mode: 0
         m_Arguments:
@@ -12476,6 +12479,18 @@ MonoBehaviour:
   DashCooldown:
     BaseValue: 0
   dashEnable: 0
+--- !u!114 &1620086005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620085998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7608b223ddd2eb4459d9b81653a61561, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1620086006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12486,6 +12501,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 205391953ff43d345afc2a48ce6365b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1620086007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620085998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e64a2dde5b8af0440ac9d540525ade8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1620086008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620085998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dfb39213c5714645b312594053e66aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!95 &1620086009
