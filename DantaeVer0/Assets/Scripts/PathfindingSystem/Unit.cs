@@ -8,7 +8,7 @@ public class Unit : MonoBehaviour
 	const float pathUpdateMoveThreshold = 1.0f;
 	public bool followPath;
 
-	public Transform target;
+	public Vector3 target;
 	public float speed = 20;
 	Vector3[] path;
 	int targetIndex;
@@ -16,11 +16,15 @@ public class Unit : MonoBehaviour
 	void Start() {
 		//TODO Implement toggle method for follow path where when true call startCoroutine and false calls stopCoroutine
 		if (target == null){
-			target = GameObject.Find("Player").transform;
+			target = GameObject.Find("Player").transform.position;
 			//float randomX = Random.Range(2.0f,8.0f);
 			//float randomY = Random.Range(2.0f,8.0f);
 			//target = new Vector3(this.gameObject.transform.position.x + randomX,this.gameObject.transform.position.y + randomY,this.gameObject.transform.position.z);
 		}
+	}
+
+	private void Update() {
+		target = GameObject.Find("Player").transform.position;
 	}
 
    public void ToggleUnitFollow(){
@@ -40,21 +44,21 @@ public class Unit : MonoBehaviour
 			yield return new WaitForSeconds(0.3f);
 		}
 		if (followPath){
-			PathRequestManager.RequestPath(new PathRequest(transform.position, target.position, OnPathFound));
+			PathRequestManager.RequestPath(new PathRequest(transform.position, target, OnPathFound));
 		}
 		
 
 		float sqrMoveThreshold = pathUpdateMoveThreshold * pathUpdateMoveThreshold;
-		Vector3 targetPosOld = target.position;
+		Vector3 targetPosOld = target;
 
 	while (true){
 		yield return new WaitForSeconds (minPathUpdateTIme);
 
-		if ((target.position-targetPosOld).sqrMagnitude > sqrMoveThreshold){
+		if ((target-targetPosOld).sqrMagnitude > sqrMoveThreshold){
 			if(followPath){
-				PathRequestManager.RequestPath(new PathRequest(transform.position,target.position, OnPathFound));
+				PathRequestManager.RequestPath(new PathRequest(transform.position,target, OnPathFound));
 			}
-			targetPosOld = target.position;
+			targetPosOld = target;
 		}	
 	}
    }
