@@ -17,8 +17,10 @@ public class Unit : MonoBehaviour
 		//TODO Implement toggle method for follow path where when true call startCoroutine and false calls stopCoroutine
 		if (target == null){
 			target = GameObject.Find("Player").transform;
+			//float randomX = Random.Range(2.0f,8.0f);
+			//float randomY = Random.Range(2.0f,8.0f);
+			//target = new Vector3(this.gameObject.transform.position.x + randomX,this.gameObject.transform.position.y + randomY,this.gameObject.transform.position.z);
 		}
-		ToggleUnitFollow();
 	}
 
    public void ToggleUnitFollow(){
@@ -110,7 +112,7 @@ public class Unit : MonoBehaviour
 		if (path != null) {
 			for (int i = targetIndex; i < path.Length; i ++) {
 				Gizmos.color = Color.black;
-				Gizmos.DrawCube(new Vector3(path[i].x,path[i].y,-5), new Vector3(1,1,-5));
+				Gizmos.DrawCube(new Vector3(path[i].x,path[i].y,-5), new Vector3(0.25f,0.25f,-5));
 
 				if (i == targetIndex) {
 					Gizmos.DrawLine(new Vector3(transform.position.x,transform.position.y,-5), new Vector3(path[i].x, path[i].y,-5));

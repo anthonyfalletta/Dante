@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 public class PlayerStateMachine : MonoBehaviour
 {
     //State Variables
-    
     PlayerBaseState _currentState;
     PlayerStateFactory _states;
 
