@@ -70,7 +70,7 @@ public class Pathfinding : MonoBehaviour
 			}
 		}
 		if (pathSuccess) {
-			waypoints = RetracePath(startNode,targetNode);
+			waypoints = RetracePath(startNode,targetNode, request.pathEnd);
 			pathSuccess = waypoints.Length > 0;
 		}
 		else if (!pathSuccess){
@@ -80,7 +80,7 @@ public class Pathfinding : MonoBehaviour
 		
 	}
 
-	Vector3[] RetracePath(Node startNode, Node endNode) {
+	Vector3[] RetracePath(Node startNode, Node endNode, Vector3 targetVector) {
 		List<Node> path = new List<Node>();
 		Node currentNode = endNode;
 		
@@ -91,13 +91,13 @@ public class Pathfinding : MonoBehaviour
 
 		//List<Vector3[]> waypointsTemp = new List<Vector3[]>();
 		if (simplifyPath){
-			Vector3[] waypoints = SimplifyPath(path);
+			Vector3[] waypoints = SimplifyPath(path, targetVector);
 			Array.Reverse(waypoints);
 			return waypoints;
 		}
 		else
 		{
-			Vector3[] waypoints = ReturnPath(path);
+			Vector3[] waypoints = ReturnPath(path, targetVector);
 			Array.Reverse(waypoints);
 			return waypoints;
 		}
@@ -108,7 +108,7 @@ public class Pathfinding : MonoBehaviour
 		
 	}
 	
-	Vector3[] SimplifyPath(List<Node> path) {
+	Vector3[] SimplifyPath(List<Node> path, Vector3 targetPosition) {
 		List<Vector3> waypoints = new List<Vector3>();
 		Vector2 directionOld = Vector2.zero;
 		
@@ -116,7 +116,7 @@ public class Pathfinding : MonoBehaviour
 		//TODO: Setup better structure in scripts to get player positon
 		//waypoints.Add(target.position);
 		//waypoints.Add(unit.target);
-
+		waypoints.Add(targetPosition);
 
 		for (int i = 1; i < path.Count; i ++) {
 			Vector2 directionNew = new Vector2(path[i-1].gridX - path[i].gridX,path[i-1].gridY - path[i].gridY);
@@ -128,7 +128,7 @@ public class Pathfinding : MonoBehaviour
 		return waypoints.ToArray();
 	}
 
-	Vector3[] ReturnPath(List<Node> path) {
+	Vector3[] ReturnPath(List<Node> path, Vector3 targetPosition) {
 		List<Vector3> waypoints = new List<Vector3>();
 		Vector2 directionOld = Vector2.zero;
 		
@@ -136,7 +136,7 @@ public class Pathfinding : MonoBehaviour
 		//TODO: Setup better structure in scripts to get player positon
 		//waypoints.Add(target.position);
 		//if (unit.target != null)
-		//	waypoints.Add(unit.target);
+		waypoints.Add(targetPosition);
 
 		for (int i = 1; i < path.Count; i ++) {
 			waypoints.Add(path[i].worldPosition);

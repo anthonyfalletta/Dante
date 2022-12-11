@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,6 +16,8 @@ public class EnemyActions : MonoBehaviour
     Vector3 wanderPoint;
     Vector3 wanderStartPoint;
     Vector3 wanderPreviousPoint;
+
+    bool bWanderComplete;
 
     public EnemyStateMachine Ctx {get{return _ctx;} set{_ctx = value;}}
         public EnemyStat Stat {get{return _stat;} set{_stat = value;}}
@@ -42,6 +45,8 @@ public class EnemyActions : MonoBehaviour
         wanderStartPoint = this.gameObject.transform.position;
         wanderPreviousPoint = this.gameObject.transform.position;
         Wander();
+
+        bWanderComplete = true;
     }
     
 
@@ -77,28 +82,39 @@ public class EnemyActions : MonoBehaviour
 
     void CheckWanderComplete()
     {
-        if (Vector2.Distance(wanderPoint,this.gameObject.transform.position) < 0.8f)
+        if (Vector2.Distance(wanderPoint,this.gameObject.transform.position) < 0.01f && bWanderComplete)
         {
+            bWanderComplete = false;
             Debug.Log("Wander Complete, Redo Wander");
-            Wander();
+            StartCoroutine(FunctionWait(Wander,2.0f,bWanderComplete));
+            
         }
     }
 
     void Follow(){
         Debug.Log("Follow Player");
-        //EnemyPahtfinding.ToggleUnitFollow();
         EnemyPahtfinding.SetTarget(_player.transform.position, Stat.Speed.Value);
         
     }
 
     public Vector2 RandomPointInAnnulus(Vector2 origin, float minRadius, float maxRadius){
  
-        var randomDirection = (Random.insideUnitCircle * origin).normalized;
+        var randomDirection = (UnityEngine.Random.insideUnitCircle * origin).normalized;
  
-        var randomDistance = Random.Range(minRadius, maxRadius);
+        var randomDistance = UnityEngine.Random.Range(minRadius, maxRadius);
  
         var point = origin + randomDirection * randomDistance;
  
         return point;
+    }
+
+    IEnumerator FunctionWait(Action Method, float seconds, bool boolean)
+    {
+        yield return new WaitForSeconds(seconds);    
+
+        Debug.Log("Wait is over");
+        Method();
+        
+        bWanderComplete = true;
     }
 }

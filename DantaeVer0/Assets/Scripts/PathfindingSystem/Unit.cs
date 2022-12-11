@@ -90,15 +90,17 @@ public class Unit : MonoBehaviour
 	public void ActivateUnitFollow(){
 		if(!followPath){
 			followPath = true;
+			StartCoroutine(UpdatePath());
 		}
-		StartCoroutine(UpdatePath());
+		
    	}
 
 	public void DeactivateUnitFollow(){
 		if(followPath){
 			followPath = false;
+			StopCoroutine(UpdatePath());
 		}
-		StartCoroutine(UpdatePath());
+		
    	}
 
    IEnumerator UpdatePath(){

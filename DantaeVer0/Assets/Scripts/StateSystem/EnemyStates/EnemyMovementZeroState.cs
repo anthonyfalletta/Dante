@@ -24,7 +24,7 @@ public class EnemyMovementZeroState : EnemyBaseState
     public override void UpdateState(){
         CheckSwitchStates();
         seek?.Invoke();
-        //wanderingCheck?.Invoke();
+        wanderingCheck?.Invoke();
     }
 
     public override void FixedUpdateState(){}
