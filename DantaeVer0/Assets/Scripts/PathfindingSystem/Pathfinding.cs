@@ -11,10 +11,13 @@ public class Pathfinding : MonoBehaviour
 	NodeGrid grid;
 	public Transform target;
 	public bool simplifyPath;
+	Unit unit;
 	
 	void Awake() {
 		//requestManager = GetComponent<PathRequestManager>();
 		grid = GetComponent<NodeGrid>();
+		unit = this.GetComponent<Unit>();
+		
 	}
 	
 	
@@ -70,6 +73,9 @@ public class Pathfinding : MonoBehaviour
 			waypoints = RetracePath(startNode,targetNode);
 			pathSuccess = waypoints.Length > 0;
 		}
+		else if (!pathSuccess){
+			Debug.Log("Path not found :(");
+		}
 		callback(new PathResult(waypoints, pathSuccess, request.callback));
 		
 	}
@@ -96,7 +102,7 @@ public class Pathfinding : MonoBehaviour
 			return waypoints;
 		}
 		//Add target position to waypoints at first or 0 position to go all the way to player
-
+		
 		//Array.Reverse(waypoints);
 		//return waypoints;
 		
@@ -108,7 +114,9 @@ public class Pathfinding : MonoBehaviour
 		
 		//Add player postion to path
 		//TODO: Setup better structure in scripts to get player positon
-		waypoints.Add(target.position);
+		//waypoints.Add(target.position);
+		//waypoints.Add(unit.target);
+
 
 		for (int i = 1; i < path.Count; i ++) {
 			Vector2 directionNew = new Vector2(path[i-1].gridX - path[i].gridX,path[i-1].gridY - path[i].gridY);
@@ -126,10 +134,12 @@ public class Pathfinding : MonoBehaviour
 		
 		//Add player postion to path
 		//TODO: Setup better structure in scripts to get player positon
-		waypoints.Add(target.position);
+		//waypoints.Add(target.position);
+		//if (unit.target != null)
+		//	waypoints.Add(unit.target);
 
 		for (int i = 1; i < path.Count; i ++) {
-				waypoints.Add(path[i].worldPosition);
+			waypoints.Add(path[i].worldPosition);
 		}	
 		return waypoints.ToArray();
 	}

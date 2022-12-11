@@ -4,30 +4,78 @@ using UnityEngine.InputSystem;
 
 public class Unit : MonoBehaviour
 {
+	NodeGrid grid;
+
 	const float minPathUpdateTIme = 0.25f; 
 	const float pathUpdateMoveThreshold = 1.0f;
 	public bool followPath;
 
 	public Vector3 target;
-	public float speed = 20;
+	public float speed = 0;
 	Vector3[] path;
 	int targetIndex;
 
+	//public Vector3 Target{get{return target;} set{target = value;}}
+
+	private void Awake() {
+		grid = GameObject.Find("PathfindingManager").GetComponent<NodeGrid>();
+		
+	}
+
 	void Start() {
 		//TODO Implement toggle method for follow path where when true call startCoroutine and false calls stopCoroutine
-		if (target == null){
-			target = GameObject.Find("Player").transform.position;
+			//target = GameObject.Find("Player").transform.position;
+			//ToggleUnitFollow();
+
+			/*
 			//float randomX = Random.Range(2.0f,8.0f);
 			//float randomY = Random.Range(2.0f,8.0f);
-			//target = new Vector3(this.gameObject.transform.position.x + randomX,this.gameObject.transform.position.y + randomY,this.gameObject.transform.position.z);
-		}
+			float randomX = 0.0f;
+			float randomY = 3.0f;
+			Vector3 randomNode = new Vector3(this.gameObject.transform.position.x,this.gameObject.transform.position.y,this.gameObject.transform.position.z) + new Vector3(randomX,randomY,0);
+
+			Node targetTestNode = grid.NodeFromWorldPoint(randomNode);
+			if(targetTestNode.walkable)
+				target = randomNode;
+			else{
+				Debug.Log("Target is not walkable");
+			}
+			*/
 	}
 
 	private void Update() {
-		target = GameObject.Find("Player").transform.position;
+		//target = GameObject.Find("Player").transform.position;
+		
 	}
 
-   public void ToggleUnitFollow(){
+
+	public void SetTarget(Vector3 targetPosition, float unitSpeed)
+	{
+		target = targetPosition;
+		speed = unitSpeed;
+	}
+
+	public bool CheckIfTargetWalkable(Vector3 targetPosition){
+		Node targetTestNode = grid.NodeFromWorldPoint(targetPosition);
+			if(targetTestNode.walkable)
+				return true;
+			else{
+				return false;
+			}
+	}
+
+	public bool CheckIfMeetsPathThresholdMoveUpdate(Vector3 oldTargePosition, Vector3 newTargetPosition){
+		float sqrMoveThreshold = pathUpdateMoveThreshold * pathUpdateMoveThreshold;
+		
+		if ((newTargetPosition-oldTargePosition).sqrMagnitude > sqrMoveThreshold){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+	public void ToggleUnitFollow(){
 	if(!followPath){
 		followPath = true;
 		StartCoroutine(UpdatePath());
@@ -38,6 +86,20 @@ public class Unit : MonoBehaviour
 		followPath = false;
 	}
    }
+
+	public void ActivateUnitFollow(){
+		if(!followPath){
+			followPath = true;
+		}
+		StartCoroutine(UpdatePath());
+   	}
+
+	public void DeactivateUnitFollow(){
+		if(followPath){
+			followPath = false;
+		}
+		StartCoroutine(UpdatePath());
+   	}
 
    IEnumerator UpdatePath(){
 		if(Time.timeSinceLevelLoad < 0.3f){
@@ -68,10 +130,10 @@ public class Unit : MonoBehaviour
 			path = newPath;
 			//targetIndex = 0;
 			StopCoroutine("FollowPath");
-			StopCoroutine("FollowPath");
-			StopCoroutine("FollowPath");
-			StopCoroutine("FollowPath");
-			StopCoroutine("FollowPath");
+			//StopCoroutine("FollowPath");
+			//StopCoroutine("FollowPath");
+			//StopCoroutine("FollowPath");
+			//StopCoroutine("FollowPath");
 			StartCoroutine("FollowPath");
 		}
 	}
@@ -113,6 +175,9 @@ public class Unit : MonoBehaviour
 	}
 
 	public void OnDrawGizmos() {
+
+		Gizmos.DrawSphere(target, 0.20f);
+
 		if (path != null) {
 			for (int i = targetIndex; i < path.Length; i ++) {
 				Gizmos.color = Color.black;

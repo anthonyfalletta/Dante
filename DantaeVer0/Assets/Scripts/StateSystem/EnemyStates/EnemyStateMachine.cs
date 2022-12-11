@@ -7,15 +7,16 @@ public class EnemyStateMachine : MonoBehaviour
     //State Variables
     EnemyBaseState _currentState;
     EnemyStateFactory _states;
+    EnemyActions _enemyActions;
 
-    Unit _unit;
+    
 
 
     //Getters & Setters
     public EnemyBaseState CurrentState{get{return _currentState;} set{_currentState = value;}}
     public EnemyStateFactory States{get{return _states;} set{_states = value;}}
-
-    public Unit EnemyPahtfinding{get{return _unit;} set{_unit = value;}}
+    public EnemyActions EnemyAction{get{return _enemyActions;} set{_enemyActions=value;}}
+    
 
     private void Awake() 
     {
@@ -23,8 +24,6 @@ public class EnemyStateMachine : MonoBehaviour
         _states = new EnemyStateFactory(this);
         _currentState = _states.MovementZero();
         _currentState.EnterState();
-
-        _unit = this.GetComponent<Unit>(); 
     }
     
     void Start()
@@ -43,14 +42,6 @@ public class EnemyStateMachine : MonoBehaviour
         _currentState.FixedUpdateStates();
     }
 
-    public void Pathing(){
-        StartCoroutine(DelayPathfinding());
-    }
-
-    IEnumerator DelayPathfinding(){
-        yield return new WaitForSeconds(5);
-        EnemyPahtfinding.ToggleUnitFollow();
-    }
 
 
 }
