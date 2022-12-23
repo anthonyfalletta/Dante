@@ -10,6 +10,10 @@ public class EnemyObject : MonoBehaviour
         
     }
 
+    public void StartActivation(){
+
+    }
+
     // Update is called once per frame
     void Update()
     {

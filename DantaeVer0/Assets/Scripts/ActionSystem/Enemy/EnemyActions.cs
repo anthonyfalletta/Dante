@@ -17,7 +17,7 @@ public class EnemyActions : MonoBehaviour
     Vector3 wanderStartPoint;
     Vector3 wanderPreviousPoint;
 
-    bool bWanderComplete;
+    static bool bWanderComplete;
 
     public EnemyStateMachine Ctx {get{return _ctx;} set{_ctx = value;}}
         public EnemyStat Stat {get{return _stat;} set{_stat = value;}}
@@ -36,6 +36,10 @@ public class EnemyActions : MonoBehaviour
 
     void Start()
     {
+        
+    }
+
+    public void StartActivation(){
         Debug.Log("They are linked");
         EnemyMovementZeroState.wandering += Wander;
         EnemyMovementZeroState.wanderingCheck += CheckWanderComplete;
@@ -52,7 +56,7 @@ public class EnemyActions : MonoBehaviour
 
     void Update()
     {
-
+        
     }
 
     void Seek(){
@@ -70,6 +74,7 @@ public class EnemyActions : MonoBehaviour
         {
             Debug.Log("Walkable Wander Target: " + wanderPoint);
             EnemyPahtfinding.ActivateUnitFollow();
+            Debug.Log(Stat.Speed.Value + "Enemy Speed Value");
             EnemyPahtfinding.SetTarget(wanderPoint, Stat.Speed.Value);
             wanderPreviousPoint = wanderPoint;
         }
@@ -86,7 +91,7 @@ public class EnemyActions : MonoBehaviour
         {
             bWanderComplete = false;
             Debug.Log("Wander Complete, Redo Wander");
-            StartCoroutine(FunctionWait(Wander,2.0f,bWanderComplete));
+            StartCoroutine(FunctionWait(Wander,2.0f));
             
         }
     }
@@ -108,7 +113,7 @@ public class EnemyActions : MonoBehaviour
         return point;
     }
 
-    IEnumerator FunctionWait(Action Method, float seconds, bool boolean)
+    IEnumerator FunctionWait(Action Method, float seconds)
     {
         yield return new WaitForSeconds(seconds);    
 

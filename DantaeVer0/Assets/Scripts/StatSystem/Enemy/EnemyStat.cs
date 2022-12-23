@@ -17,4 +17,10 @@ public class EnemyStat : MonoBehaviour
 
     }
 
+    public void StartActivation(){
+        Speed.BaseValue = 1f;
+        MinWander.BaseValue = 1.1f;
+        MaxWander.BaseValue = 1.5f;
+    }
+
 }

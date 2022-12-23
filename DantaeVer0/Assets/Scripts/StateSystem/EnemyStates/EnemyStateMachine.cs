@@ -22,8 +22,6 @@ public class EnemyStateMachine : MonoBehaviour
     {
         //Setup State
         _states = new EnemyStateFactory(this);
-        _currentState = _states.MovementZero();
-        _currentState.EnterState();
     }
     
     void Start()
@@ -31,6 +29,10 @@ public class EnemyStateMachine : MonoBehaviour
         
     }
 
+    public void StartActivation(){
+        _currentState = _states.MovementZero();
+        _currentState.EnterState();
+    }
     
     void Update()
     {
