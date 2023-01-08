@@ -12,10 +12,11 @@ public class SeekDecision : StateDecision
     }
 
     private bool Seek(StateController controller){
-        //if (Vector2.Distance(_player.transform.position,this.gameObject.transform.position) < 4.0f){
+        if (Vector2.Distance(controller.data.Player.transform.position,controller.gameObject.transform.position) < 4.0f)
+        {
+            return true;
+        }
+        return false;
 
-        //}
-        return true;
-        //* Checking if target is within some distance (walls do not matter for this function).
     }
 }

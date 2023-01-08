@@ -4,15 +4,36 @@ using UnityEngine;
 
 public class StateController : MonoBehaviour
 {
+    public CharactersStat data;
+    public Unit pathfinding;
+
     public State currentState;
     private bool aiActive;
     public State remainState;
     public float stateTimeElapsed;
+    
+
+    
+    
+
+
+    public static StateController instance;
+
+    private void Awake() 
+    {
+        data = this.gameObject.GetComponent<CharactersStat>();
+        pathfinding = this.gameObject.GetComponent<Unit>();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        StateController.instance = this;
+        
         aiActive = true;
+        //wanderStartPoint = this.gameObject.transform.position;
+
+        currentState.EnterState(this);
     }
 
     // Update is called once per frame
@@ -34,7 +55,9 @@ public class StateController : MonoBehaviour
     public void TransitionToState(State nextState)
     {
         if(nextState != remainState){
+            currentState.ExitState(this);
             currentState = nextState;
+            currentState.EnterState(this);
         }
     }
 
@@ -42,10 +65,5 @@ public class StateController : MonoBehaviour
     {
         stateTimeElapsed += Time.deltaTime;
         return (stateTimeElapsed >= duration);
-    }
-
-    private void OnExitState()
-    {
-        stateTimeElapsed = 0;
     }
 }

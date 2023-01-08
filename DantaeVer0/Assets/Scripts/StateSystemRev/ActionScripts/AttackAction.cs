@@ -5,7 +5,11 @@ using UnityEngine;
 [CreateAssetMenu (menuName = "StateSystem/Actions/Attack")]
 public class AttackAction : StateAction
 {
-    public override void Act(StateController controller)
+    public override void ActStart(StateController controller)
+    {
+    
+    }
+    public override void ActUpdate(StateController controller)
     {
         Attack(controller);
     }

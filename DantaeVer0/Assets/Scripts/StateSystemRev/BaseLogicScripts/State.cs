@@ -11,13 +11,29 @@ public class State : ScriptableObject
 
     public Color sceneGizmoColor = Color.grey;
 
-    public void UpdateState(StateController controller){
-        DoActions(controller);
+    public void EnterState(StateController controller){
+        DoStartActions(controller);
     }
 
-    private void DoActions(StateController controller){
+    public void UpdateState(StateController controller){
+        DoUpdateActions(controller);
+        CheckTransitions(controller);
+    }
+
+    public void ExitState(StateController controller){
+        controller.stateTimeElapsed = 0;
+        //controller.StopAllCoroutines();
+    }
+
+    private void DoStartActions(StateController controller){
         for(int i=0; i<actions.Length; i++){
-            actions[i].Act(controller);
+            actions[i].ActStart(controller);
+        }
+    }
+
+    private void DoUpdateActions(StateController controller){
+        for(int i=0; i<actions.Length; i++){
+            actions[i].ActUpdate(controller);
         }
     }
 

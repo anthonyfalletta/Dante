@@ -2738,11 +2738,7 @@ GameObject:
   - component: {fileID: 1324109642}
   - component: {fileID: 1324109644}
   - component: {fileID: 1324109645}
-  - component: {fileID: 1324109646}
-  - component: {fileID: 1324109647}
   - component: {fileID: 1324109648}
-  - component: {fileID: 1324109649}
-  - component: {fileID: 1324109650}
   - component: {fileID: 1324109651}
   m_Layer: 9
   m_Name: Enemy
@@ -2856,30 +2852,6 @@ MonoBehaviour:
   followPath: 0
   target: {x: 0, y: 0, z: 0}
   speed: 2
---- !u!114 &1324109646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1324109641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f83f435b5ad95d4cbc905f5bd4ed82d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1324109647
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1324109641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ff564065c00b1d40b9d28beaa8a1b2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1324109648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2889,7 +2861,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1324109641}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4a837aca1f596444992949fa0ed89a1, type: 3}
+  m_Script: {fileID: 11500000, guid: f864b8d733d1835428ed07c266f40f48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Speed:
@@ -2898,30 +2870,10 @@ MonoBehaviour:
     BaseValue: 0
   MaxWander:
     BaseValue: 0
---- !u!114 &1324109649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1324109641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7185df3ad8c993241a36fe0647cbbec9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1324109650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1324109641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbb00dbd4b9568e49996273144cc5683, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  wanderStartPoint: {x: 0, y: 0, z: 0}
+  wanderPreviousPoint: {x: 0, y: 0, z: 0}
+  wanderPoint: {x: 0, y: 0, z: 0}
+  bWanderComplete: 0
 --- !u!114 &1324109651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2934,9 +2886,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae91af12ab914334797e899068f5fe3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: {fileID: 0}
+  pathfinding: {fileID: 0}
   currentState: {fileID: 11400000, guid: 642fe4c509f8f284989dcb237d0a0df5, type: 2}
   remainState: {fileID: 11400000, guid: 585feb3fabedca64eb9f1f95baee03db, type: 2}
   stateTimeElapsed: 0
+  player: {fileID: 0}
 --- !u!1 &1554523875
 GameObject:
   m_ObjectHideFlags: 0

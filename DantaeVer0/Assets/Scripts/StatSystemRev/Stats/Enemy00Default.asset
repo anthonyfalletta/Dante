@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7a11ecb3317a904999802a104286784, type: 3}
-  m_Name: ChaseState
+  m_Script: {fileID: 11500000, guid: 58ec6e68f1c2cf746b83dbed80781175, type: 3}
+  m_Name: Enemy00Default
   m_EditorClassIdentifier: 
-  actions:
-  - {fileID: 11400000, guid: ce02b2f32376bf84da8108dbc46e86a5, type: 2}
-  transitions: []
-  sceneGizmoColor: {r: 0.8396226, g: 0.122774996, b: 0.122774996, a: 1}
+  _health: 100
+  _speed: 1
+  wanderMinDistance: 1.1
+  wanderMaxDistance: 1.5

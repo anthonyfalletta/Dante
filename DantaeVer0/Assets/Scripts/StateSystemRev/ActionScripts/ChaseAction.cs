@@ -5,13 +5,18 @@ using UnityEngine;
 [CreateAssetMenu (menuName = "StateSystem/Actions/Chase")]
 public class ChaseAction : StateAction
 {
-    public override void Act(StateController controller)
+    public override void ActStart(StateController controller)
     {
         
     }
 
+    public override void ActUpdate(StateController controller)
+    {
+        Chase(controller);
+    }
+
     private void Chase(StateController controller)
     {
-        Debug.Log("Chase Target");
+        controller.pathfinding.SetTarget(controller.data.Player.transform.position, controller.data.Speed.Value);
     }
 }
