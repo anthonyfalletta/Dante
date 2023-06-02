@@ -23,10 +23,7 @@ public class PlayerAnimationController : MonoBehaviour
 
     void Start()
     {
-        PlayerMoveState.moveAnimatonActive += EnableMoveAnimation;
-        PlayerMoveState.moveAnimatonDeactivate += DisableMoveAnimation;
-        PlayerDashState.dashAnimatonActive += EnableDashAnimation;
-        PlayerDashState.dashAnimatonDeactive += DisableDashAnimation;
+       
     }
 
     void Update()
@@ -40,19 +37,19 @@ public class PlayerAnimationController : MonoBehaviour
         _isDashingHash = Animator.StringToHash("isDashing");
     }
 
-    void EnableMoveAnimation(){
+    public void EnableMoveAnimation(){
         Animator.SetBool(IsMovingHash, true);
     }
 
-    void DisableMoveAnimation(){
+    public void DisableMoveAnimation(){
         Animator.SetBool(IsMovingHash, false);
     }
 
-    void EnableDashAnimation(){
+    public void EnableDashAnimation(){
         Animator.SetBool(IsDashingHash, true);
     }
 
-    void DisableDashAnimation(){
+    public void DisableDashAnimation(){
         Animator.SetBool(IsDashingHash, false);
     }
 

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class EnemyMovementZeroState : EnemyBaseState
+public class WandererWanderState : EnemyBaseState
 {
     public static Action wandering;
     public static Action wanderingCheck;
     public static Action seek;
 
-    public EnemyMovementZeroState(EnemyStateMachine currentContext, EnemyStateFactory enemyStateFactory)
+    public WandererWanderState(EnemyStateMachine currentContext, EnemyStateFactory enemyStateFactory)
     :base(currentContext, enemyStateFactory){
         IsRootState = true;
         InitializeSubState();
@@ -17,14 +17,14 @@ public class EnemyMovementZeroState : EnemyBaseState
     public override void EnterState(){
         Debug.Log("Is activating Enter State");
         //TODO Need to check if level has been loaded for some duration
-        wandering?.Invoke();
+        Ctx.Action.Wander();
         
     }
 
     public override void UpdateState(){
         CheckSwitchStates();
-        seek?.Invoke();
-        wanderingCheck?.Invoke();
+        Ctx.Action.Seek();
+        Ctx.Action.CheckWanderComplete();
     }
 
     public override void FixedUpdateState(){}

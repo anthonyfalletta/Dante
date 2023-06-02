@@ -22,17 +22,17 @@ public class PlayerIdleState : PlayerBaseState
 
     }
     public override void CheckSwitchStates(){
-        if (Ctx.Input.IsMovePressed)
+        if (Ctx.Action.Input.IsMovePressed)
         {
             SwitchState(Factory.Move());
         }
-        else if (Ctx.Input.IsShootPressed){
+        else if (Ctx.Action.Input.IsShootPressed){
             SwitchState(Factory.Shoot());
         }
-        else if (Ctx.Input.IsAttackPressed){
+        else if (Ctx.Action.Input.IsAttackPressed){
             SwitchState(Factory.Attack());
         }
-        else if (Ctx.Input.IsSpecialPressed)
+        else if (Ctx.Action.Input.IsSpecialPressed)
         {
             SwitchState(Factory.Special());
         }

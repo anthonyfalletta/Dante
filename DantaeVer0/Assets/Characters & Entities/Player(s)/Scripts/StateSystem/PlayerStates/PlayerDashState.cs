@@ -16,8 +16,8 @@ public class PlayerDashState : PlayerBaseState
         InitializeSubState();
     }
     public override void EnterState(){
-        dashAnimatonActive?.Invoke();
-        dashReset?.Invoke();
+        Ctx.Action.Animator.EnableDashAnimation();
+        Ctx.Action.DashReset();
     }
     public override void UpdateState(){
         CheckSwitchStates();
@@ -25,10 +25,10 @@ public class PlayerDashState : PlayerBaseState
     }
 
     public override void FixedUpdateState(){
-        dashInput?.Invoke();
+        Ctx.Action.Dash();
     }
     public override void ExitState(){
-        dashAnimatonDeactive?.Invoke();
+        Ctx.Action.Animator.DisableDashAnimation();
     }
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){

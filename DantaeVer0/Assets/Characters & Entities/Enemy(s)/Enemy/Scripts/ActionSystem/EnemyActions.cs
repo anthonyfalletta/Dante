@@ -41,10 +41,7 @@ public class EnemyActions : MonoBehaviour
 
     public void StartActivation(){
         Debug.Log("They are linked");
-        EnemyMovementZeroState.wandering += Wander;
-        EnemyMovementZeroState.wanderingCheck += CheckWanderComplete;
-        EnemyMovementZeroState.seek += Seek;
-        EnemyMovementOneState.follow += Follow;
+
     
         wanderStartPoint = this.gameObject.transform.position;
         wanderPreviousPoint = this.gameObject.transform.position;
@@ -59,15 +56,15 @@ public class EnemyActions : MonoBehaviour
         
     }
 
-    void Seek(){
+    public void Seek(){
         if (Vector2.Distance(_player.transform.position,this.gameObject.transform.position) < 4.0f)
         {
             Debug.Log("SWITCH TO MOVE2");
-            Ctx.CurrentState.SwitchState(Ctx.States.MovementOne());
+            Ctx.CurrentState.SwitchState(Ctx.States.Follow());
         }
     }
 
-    void Wander(){
+    public void Wander(){
         wanderPoint = RandomPointInAnnulus(wanderStartPoint, Stat.MinWander.Value, Stat.MaxWander.Value);
         //Debug.Log("Wander Point: " + wanderPoint);
         if (EnemyPahtfinding.CheckIfTargetWalkable(wanderPoint) && EnemyPahtfinding.CheckIfMeetsPathThresholdMoveUpdate(wanderPreviousPoint, wanderPoint))
@@ -85,7 +82,7 @@ public class EnemyActions : MonoBehaviour
         }
     }
 
-    void CheckWanderComplete()
+    public void CheckWanderComplete()
     {
         if (Vector2.Distance(wanderPoint,this.gameObject.transform.position) < 0.01f && bWanderComplete)
         {
@@ -96,7 +93,7 @@ public class EnemyActions : MonoBehaviour
         }
     }
 
-    void Follow(){
+    public void Follow(){
         Debug.Log("Follow Player");
         EnemyPahtfinding.SetTarget(_player.transform.position, Stat.Speed.Value);
         

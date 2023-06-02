@@ -5,7 +5,7 @@ using System;
 
 public class PlayerMoveState : PlayerBaseState
 {
-    public static Action moveInput;
+    //public static Action moveInput;
     public static Action velocityZero;
     public static Action moveAnimatonActive;
     public static Action moveAnimatonDeactivate;
@@ -16,34 +16,34 @@ public class PlayerMoveState : PlayerBaseState
         InitializeSubState();
     }
     public override void EnterState(){
-        moveAnimatonActive?.Invoke();
+        Ctx.Action.Animator.EnableMoveAnimation();
     }
     public override void UpdateState(){
         CheckSwitchStates();  
     }
 
     public override void FixedUpdateState(){
-        moveInput?.Invoke();
+        Ctx.Action.Move();
     }
     public override void ExitState(){
-        moveAnimatonDeactivate?.Invoke();
-        velocityZero?.Invoke();
+        Ctx.Action.Animator.DisableMoveAnimation();
+        Ctx.Action.SetVelocityZero();
     }
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        if (Ctx.Input.IsDashPressed && Ctx.DashStateEnabled)
+        if (Ctx.Action.Input.IsDashPressed && Ctx.DashStateEnabled)
         {
             SwitchState(Factory.Dash());
         }
-        if (Ctx.Input.IsShootPressed)
+        if (Ctx.Action.Input.IsShootPressed)
         {
             SwitchState(Factory.Shoot());
         }
-        if (Ctx.Input.IsSpecialPressed)
+        if (Ctx.Action.Input.IsSpecialPressed)
         {
             SwitchState(Factory.Special());
         }
-        else if (!Ctx.Input.IsMovePressed){
+        else if (!Ctx.Action.Input.IsMovePressed){
             SwitchState(Factory.Idle());
         }   
     }   

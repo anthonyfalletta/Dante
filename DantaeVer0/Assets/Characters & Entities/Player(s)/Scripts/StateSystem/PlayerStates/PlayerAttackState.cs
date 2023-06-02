@@ -19,12 +19,12 @@ public class PlayerAttackState : PlayerBaseState
     }
 
     public override void FixedUpdateState(){
-        attackInput?.Invoke();
+        Ctx.Action.Attack();
     }
     public override void ExitState(){}
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        if (!Ctx.Input.IsAttackPressed){
+        if (!Ctx.Action.Input.IsAttackPressed){
             SwitchState(Factory.Idle());
         }
     }

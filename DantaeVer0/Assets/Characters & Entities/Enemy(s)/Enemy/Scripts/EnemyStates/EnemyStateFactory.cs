@@ -9,54 +9,26 @@ public class EnemyStateFactory{
     public EnemyStateFactory(EnemyStateMachine currentContext)
     {
        _context = currentContext;
-       _states[EnemyStates.movementZero] = new EnemyMovementZeroState(_context, this);
-       _states[EnemyStates.movementOne] = new EnemyMovementOneState(_context, this);
-       _states[EnemyStates.movementTwo] = new EnemyMovementTwoState(_context, this);
-       _states[EnemyStates.attackZero] = new EnemyAttackZeroState(_context, this);
-       _states[EnemyStates.attackOne] = new EnemyAttackOneState(_context, this);
-       _states[EnemyStates.attackTwo] = new EnemyAttackTwoState(_context, this);
-       _states[EnemyStates.actionZero] = new EnemyActionZeroState(_context, this);
-       _states[EnemyStates.actionOne] = new EnemyActionOneState(_context, this);
-       _states[EnemyStates.actionTwo] = new EnemyActionTwoState(_context, this);
+       _states[EnemyStates.wander] = new WandererWanderState(_context, this);
+       _states[EnemyStates.follow] = new WandererFollowState(_context, this);
+       _states[EnemyStates.lunge] = new WandererLungeState(_context, this);
    }
 
-   public EnemyBaseState MovementZero()
+   public EnemyBaseState Wander()
    {
-       return _states[EnemyStates.movementZero];
+       return _states[EnemyStates.wander];
    }
-   public EnemyBaseState MovementOne()
+   public EnemyBaseState Follow()
    {
-       return _states[EnemyStates.movementOne];
+       return _states[EnemyStates.follow];
    }
-   public EnemyBaseState MovementTwo()
+ 
+   public EnemyBaseState Lunge()
    {
-       return _states[EnemyStates.movementTwo];
+       return _states[EnemyStates.lunge];
    }
-   public EnemyBaseState AttackZero()
-   {
-       return _states[EnemyStates.attackZero];
-   }
-   public EnemyBaseState AttackOne()
-   {
-       return _states[EnemyStates.attackOne];
-   }
-   public EnemyBaseState AttackTwo()
-   {
-       return _states[EnemyStates.attackTwo];
-   }
-   public EnemyBaseState ActionZero()
-   {
-       return _states[EnemyStates.attackZero];
-   }
-   public EnemyBaseState ActionOne()
-   {
-       return _states[EnemyStates.attackOne];
-   }
-    public EnemyBaseState ActionTwo()
-   {
-       return _states[EnemyStates.attackTwo];
-   }
+  
 }
 
-enum EnemyStates{movementZero,movementOne,movementTwo,attackZero,attackOne,attackTwo, actionZero, actionOne, actionTwo}
+enum EnemyStates{wander,follow,lunge}
 

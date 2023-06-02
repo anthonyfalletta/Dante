@@ -12,7 +12,7 @@ public class PlayerShootState : PlayerBaseState
         InitializeSubState();
     }
     public override void EnterState(){
-        createProjectile?.Invoke();
+        Ctx.Action.ProjectileCreation();
     }
     public override void UpdateState(){
         CheckSwitchStates();
@@ -24,7 +24,7 @@ public class PlayerShootState : PlayerBaseState
     }
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        if (!Ctx.Input.IsShootPressed){
+        if (!Ctx.Action.Input.IsShootPressed){
             SwitchState(Factory.Idle());
         }
     }

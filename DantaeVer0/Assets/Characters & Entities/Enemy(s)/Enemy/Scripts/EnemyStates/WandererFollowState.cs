@@ -1,18 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class EnemyActionZeroState : EnemyBaseState
+public class WandererFollowState : EnemyBaseState
 {
-    public EnemyActionZeroState(EnemyStateMachine currentContext, EnemyStateFactory enemyStateFactory)
+    public static Action follow;
+
+    public WandererFollowState(EnemyStateMachine currentContext, EnemyStateFactory enemyStateFactory)
     :base(currentContext, enemyStateFactory){
         IsRootState = true;
         InitializeSubState();
     }
     public override void EnterState(){
+        Ctx.Action.Follow();
     }
     public override void UpdateState(){
         CheckSwitchStates();
+        Ctx.Action.Follow();
     }
 
     public override void FixedUpdateState(){}

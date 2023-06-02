@@ -7,7 +7,7 @@ public class EnemyStateMachine : MonoBehaviour
     //State Variables
     EnemyBaseState _currentState;
     EnemyStateFactory _states;
-    EnemyActions _enemyActions;
+    EnemyActions _actions;
 
     
 
@@ -15,7 +15,7 @@ public class EnemyStateMachine : MonoBehaviour
     //Getters & Setters
     public EnemyBaseState CurrentState{get{return _currentState;} set{_currentState = value;}}
     public EnemyStateFactory States{get{return _states;} set{_states = value;}}
-    public EnemyActions EnemyAction{get{return _enemyActions;} set{_enemyActions=value;}}
+    public EnemyActions Action{get{return _actions;} set{_actions=value;}}
     
 
     private void Awake() 
@@ -26,11 +26,11 @@ public class EnemyStateMachine : MonoBehaviour
     
     void Start()
     {
-        
+        _actions = this.GetComponent<EnemyActions>();
     }
 
     public void StartActivation(){
-        _currentState = _states.MovementZero();
+        _currentState = _states.Wander();
         _currentState.EnterState();
     }
     

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAttackOneState : EnemyBaseState
+public class WandererLungeState : EnemyBaseState
 {
-    public EnemyAttackOneState(EnemyStateMachine currentContext, EnemyStateFactory enemyStateFactory)
+    public WandererLungeState(EnemyStateMachine currentContext, EnemyStateFactory enemyStateFactory)
     :base(currentContext, enemyStateFactory){
         IsRootState = true;
         InitializeSubState();

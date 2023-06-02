@@ -8,26 +8,25 @@ public class PlayerActions : MonoBehaviour
     PlayerStat _stat;
     PlayerInputController _input;
     PlayerObject _obj;
+    PlayerAnimationController _animator;
 
     public PlayerStateMachine Ctx {get{return _ctx;} set{_ctx = value;}}
     public PlayerStat Stat {get{return _stat;} set{_stat = value;}}
     public PlayerInputController Input {get{return _input;} set{_input = value;}}
     public PlayerObject Obj {get{return _obj;} set{_obj = value;}}
+    public PlayerAnimationController Animator {get{return _animator;} set{_animator = value;}}
 
     private void Awake() {
         _ctx = this.GetComponent<PlayerStateMachine>();
         _stat = this.GetComponent<PlayerStat>();
         _input = this.GetComponent<PlayerInputController>();
         _obj = this.GetComponent<PlayerObject>();
+        _animator = this.GetComponent<PlayerAnimationController>();
     }
+    
     void Start()
     {
-        PlayerDashState.dashInput += Dash;
-        PlayerDashState.dashReset += DashReset;
-        PlayerMoveState.moveInput += Move;
-        PlayerMoveState.velocityZero += SetVelocityZero;
-        PlayerAttackState.attackInput += Attack;
-        PlayerShootState.createProjectile += ProjectileCreation;
+
     }
 
     void Update()
@@ -35,44 +34,44 @@ public class PlayerActions : MonoBehaviour
         
     }
 
-    void SetVelocityZero(){
+    public void SetVelocityZero(){
         Obj.PlayerRb.velocity = Vector2.zero;
     }
 
-    void Move(){
+    public void Move(){
         Obj.PlayerRb.velocity = Input.MovementInputValue.normalized * Stat.Speed.Value * Time.deltaTime;
     }
 
-    void DashReset(){
+    public void DashReset(){
         Ctx.DashStateEnabled = false;
         Stat.DashSpeed.BaseValue = Stat.DashDefaultSpeed.Value;
     }
 
-    void Dash(){
+    public void Dash(){
         Vector2 dashDir = Input.MovementInputValue.normalized;
         Obj.PlayerRb.velocity = dashDir * Stat.DashSpeed.Value * Time.deltaTime;
-        StartCoroutine(DashSpeedSlowdown());
+        StartCoroutine(IDashSpeedSlowdown());
         
     }
 
-    IEnumerator DashSpeedSlowdown()
+    IEnumerator IDashSpeedSlowdown()
     {
         while(Stat.DashSpeed.Value > Stat.DashDuration.Value)
         {
             Stat.DashSpeed.BaseValue -= Stat.DashSpeed.Value * Stat.DashDecrease.Value * Time.deltaTime;
             yield break;
         }
-        StartCoroutine(CooldownTimer(Stat.DashCooldown.Value));
+        StartCoroutine(ICooldownTimer(Stat.DashCooldown.Value));
         Ctx.CurrentState.SwitchState(Ctx.States.Move());    
     }
 
-    IEnumerator CooldownTimer(float dashCooldownTime)
+    IEnumerator ICooldownTimer(float dashCooldownTime)
     {
             yield return new WaitForSeconds(dashCooldownTime);
             Ctx.DashStateEnabled = true;
     }
 
-    void Attack()
+    public void Attack()
     {
         float angle = Mathf.Atan2(Input.MovementInputValue.normalized.y,Input.MovementInputValue.normalized.x) * Mathf.Rad2Deg;
         Quaternion attackRotation = Quaternion.Euler(new Vector3(0,0,angle));
@@ -86,7 +85,7 @@ public class PlayerActions : MonoBehaviour
         yield return new WaitForSeconds(2f);
     }
 
-    void InstantiateAttackGameObject()
+    public void InstantiateAttackGameObject()
     {
         float angle = Mathf.Atan2(Input.LastMovementInputValue.normalized.y,Input.LastMovementInputValue.normalized.x) * Mathf.Rad2Deg;
         Quaternion playerRot = Quaternion.Euler(0,0,angle);
@@ -94,11 +93,11 @@ public class PlayerActions : MonoBehaviour
         Instantiate(Obj.AttackObject, playerPos, playerRot);
     }
 
-    void ProjectileCreation(){
+    public void ProjectileCreation(){
         InstantiateProjectile();
     }
    
-    void InstantiateProjectile()
+    public void InstantiateProjectile()
     {
         float angle = Mathf.Atan2(Input.LastMovementInputValue.normalized.y,Input.LastMovementInputValue.normalized.x) * Mathf.Rad2Deg;
         Quaternion playerRot = Quaternion.Euler(0,0,angle);

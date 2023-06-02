@@ -11,6 +11,7 @@ public class PlayerStateMachine : MonoBehaviour
     PlayerStateFactory _states;
 
     PlayerInputController _input;
+    PlayerActions _action;
 
     bool _dashStateEnabled;
 
@@ -18,8 +19,8 @@ public class PlayerStateMachine : MonoBehaviour
     public PlayerBaseState CurrentState{get{return _currentState;} set{_currentState = value;}}
     public PlayerStateFactory States{get{return _states;} set{_states = value;}}
 
-    public PlayerInputController Input {get{return _input;} set{_input = value;}}
 
+    public PlayerActions Action {get{return _action;} set{_action = value;}}
     public bool DashStateEnabled {get{return _dashStateEnabled;} set{_dashStateEnabled = value;}}
 
     private void Awake() 
@@ -29,7 +30,7 @@ public class PlayerStateMachine : MonoBehaviour
         _currentState = _states.Idle();
         _currentState.EnterState();
 
-        _input = this.GetComponent<PlayerInputController>(); 
+        _action = this.GetComponent<PlayerActions>();
     }
     
     void Start()
