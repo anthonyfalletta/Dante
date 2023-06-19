@@ -17,13 +17,14 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void EnterState(){
         Ctx.Action.Animator.EnableMoveAnimation();
+        Ctx.Action.Move();
     }
     public override void UpdateState(){
         CheckSwitchStates();  
     }
 
     public override void FixedUpdateState(){
-        Ctx.Action.Move();
+        
     }
     public override void ExitState(){
         Ctx.Action.Animator.DisableMoveAnimation();

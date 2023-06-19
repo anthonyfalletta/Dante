@@ -16,6 +16,8 @@ public class PlayerActions : MonoBehaviour
     public PlayerObject Obj {get{return _obj;} set{_obj = value;}}
     public PlayerAnimationController Animator {get{return _animator;} set{_animator = value;}}
 
+    public bool isMoving = false;
+
     private void Awake() {
         _ctx = this.GetComponent<PlayerStateMachine>();
         _stat = this.GetComponent<PlayerStat>();
@@ -34,12 +36,25 @@ public class PlayerActions : MonoBehaviour
         
     }
 
+    void FixedUpdate(){
+        MoveLogic();
+    }
+
     public void SetVelocityZero(){
-        Obj.PlayerRb.velocity = Vector2.zero;
+        isMoving = false;
     }
 
     public void Move(){
-        Obj.PlayerRb.velocity = Input.MovementInputValue.normalized * Stat.Speed.Value * Time.deltaTime;
+        isMoving = true;
+    }
+
+    public void MoveLogic()
+    {
+        if (isMoving){
+            Obj.PlayerRb.velocity = Input.MovementInputValue.normalized * Stat.Speed.Value * Time.deltaTime;
+        }else{
+            Obj.PlayerRb.velocity = Vector2.zero;
+        }
     }
 
     public void DashReset(){

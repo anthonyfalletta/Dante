@@ -17,7 +17,7 @@ public class WandererWanderState : EnemyBaseState
     public override void EnterState(){
         Debug.Log("Is activating Enter State");
         //TODO Need to check if level has been loaded for some duration
-        Ctx.Action.Wander();
+        //Ctx.Action.Wander();
         
     }
 

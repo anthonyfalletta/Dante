@@ -23,7 +23,7 @@ public class EnemyActions : MonoBehaviour
         public EnemyStat Stat {get{return _stat;} set{_stat = value;}}
     //public EnemyObject Obj {get{return _obj;} set{_obj = value;}}
 
-    public Unit EnemyPahtfinding{get{return _unit;} set{_unit = value;}}
+    //public Unit EnemyPahtfinding{get{return _unit;} set{_unit = value;}}
 
     private void Awake() {
         _player = GameObject.Find("Player");
@@ -67,6 +67,7 @@ public class EnemyActions : MonoBehaviour
     public void Wander(){
         wanderPoint = RandomPointInAnnulus(wanderStartPoint, Stat.MinWander.Value, Stat.MaxWander.Value);
         //Debug.Log("Wander Point: " + wanderPoint);
+        /*
         if (EnemyPahtfinding.CheckIfTargetWalkable(wanderPoint) && EnemyPahtfinding.CheckIfMeetsPathThresholdMoveUpdate(wanderPreviousPoint, wanderPoint))
         {
             Debug.Log("Walkable Wander Target: " + wanderPoint);
@@ -80,6 +81,7 @@ public class EnemyActions : MonoBehaviour
             Debug.Log("Unwalkable Wander Target: " + wanderPoint);
             Wander();
         }
+        */
     }
 
     public void CheckWanderComplete()
@@ -95,7 +97,7 @@ public class EnemyActions : MonoBehaviour
 
     public void Follow(){
         Debug.Log("Follow Player");
-        EnemyPahtfinding.SetTarget(_player.transform.position, Stat.Speed.Value);
+        //EnemyPahtfinding.SetTarget(_player.transform.position, Stat.Speed.Value);
         
     }
 

@@ -12,13 +12,13 @@ public class PathRequestManager : MonoBehaviour
 
 	Queue<PathResult> results = new Queue<PathResult>();
 	static PathRequestManager instance;
-	Pathfinding pathfinding;
+	PathfindingPersonal pathfinding;
 
 	//bool isProcessingPath;
 
 	void Awake() {
 		instance = this;
-		pathfinding = GetComponent<Pathfinding>();
+		pathfinding = GetComponent<PathfindingPersonal>();
 	}
 
 	void Update(){
