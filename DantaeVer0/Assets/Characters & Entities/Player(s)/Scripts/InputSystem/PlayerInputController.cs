@@ -5,6 +5,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputController : MonoBehaviour
 {
+
+
+
+
     //Abilities Variables
     bool _isMovePressed;
     bool _isDashPressed;
@@ -24,9 +28,11 @@ public class PlayerInputController : MonoBehaviour
     public Vector2 MovementInputValue {get{return _movementInputValue;} set{_movementInputValue = value;}}
     public Vector2 LastMovementInputValue {get{return _lastMovementInputValue;} set{_lastMovementInputValue = value;}}
 
+    
     private void Start() {
-        LastMovementInputValue = new Vector2(0,-1);
+        LastMovementInputValue = new Vector2(0,-1); 
     }
+
     
     public void OnMoveButton(InputAction.CallbackContext context)
     {

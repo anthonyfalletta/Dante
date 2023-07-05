@@ -16,8 +16,8 @@ public class PlayerDashState : PlayerBaseState
         InitializeSubState();
     }
     public override void EnterState(){
-        Ctx.Action.Animator.EnableDashAnimation();
-        Ctx.Action.DashReset();
+        Ctx.Animator.EnableDashAnimation();
+        DashReset();
     }
     public override void UpdateState(){
         CheckSwitchStates();
@@ -25,13 +25,24 @@ public class PlayerDashState : PlayerBaseState
     }
 
     public override void FixedUpdateState(){
-        Ctx.Action.Dash();
+        Dash();
     }
     public override void ExitState(){
-        Ctx.Action.Animator.DisableDashAnimation();
+        Ctx.Animator.DisableDashAnimation();
     }
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
 
+    }
+
+    public void Dash(){
+        Ctx.DashStateEnabled = false;
+        Ctx.Stat.DashSpeed.BaseValue = Ctx.Stat.DashDefaultSpeed.Value;
+    }
+
+    public void DashReset(){
+        Vector2 dashDir = Ctx.Input.MovementInputValue.normalized;
+        Ctx.PlayerRb.velocity = dashDir * Ctx.Stat.DashSpeed.Value * Time.deltaTime;
+        Ctx.DashSpeedSlowdown();
     }
 }

@@ -22,11 +22,11 @@ public class PlayerSpecialState : PlayerBaseState
 
     }
     public override void CheckSwitchStates(){
-        if (!Ctx.Action.Input.IsSpecialPressed)
+        if (!Ctx.Input.IsSpecialPressed)
         {
             SwitchState(Factory.Idle());
         }
-        if (Ctx.Action.Input.IsDashPressed)
+        if (Ctx.Input.IsDashPressed)
         {
             SwitchState(Factory.Dash());
         }

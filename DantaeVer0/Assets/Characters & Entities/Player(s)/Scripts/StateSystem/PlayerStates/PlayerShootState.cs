@@ -12,7 +12,7 @@ public class PlayerShootState : PlayerBaseState
         InitializeSubState();
     }
     public override void EnterState(){
-        Ctx.Action.ProjectileCreation();
+        ProjectileCreation();
     }
     public override void UpdateState(){
         CheckSwitchStates();
@@ -24,8 +24,20 @@ public class PlayerShootState : PlayerBaseState
     }
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        if (!Ctx.Action.Input.IsShootPressed){
+        if (!Ctx.Input.IsShootPressed){
             SwitchState(Factory.Idle());
         }
     }
+
+    public void ProjectileCreation(){
+        InstantiateProjectile();
+    }
+   
+    public void InstantiateProjectile()
+    {
+        float angle = Mathf.Atan2(Ctx.Input.LastMovementInputValue.normalized.y,Ctx.Input.LastMovementInputValue.normalized.x) * Mathf.Rad2Deg;
+        Quaternion playerRot = Quaternion.Euler(0,0,angle);
+        Vector3 playerPos = Ctx.Obj.PlayerGO.transform.position + (new Vector3(-Ctx.Input.LastMovementInputValue.x,-Ctx.Input.LastMovementInputValue.y,0).normalized * 0.1f);
+        Ctx.InstantiateProj(playerPos, playerRot);
+    } 
 }

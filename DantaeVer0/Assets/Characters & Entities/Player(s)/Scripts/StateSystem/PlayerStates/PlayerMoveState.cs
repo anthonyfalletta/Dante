@@ -16,36 +16,46 @@ public class PlayerMoveState : PlayerBaseState
         InitializeSubState();
     }
     public override void EnterState(){
-        Ctx.Action.Animator.EnableMoveAnimation();
-        Ctx.Action.Move();
+        Ctx.Animator.EnableMoveAnimation();
+        
     }
     public override void UpdateState(){
         CheckSwitchStates();  
+        
     }
 
     public override void FixedUpdateState(){
-        
+        Move();
     }
     public override void ExitState(){
-        Ctx.Action.Animator.DisableMoveAnimation();
-        Ctx.Action.SetVelocityZero();
+        SetVelocityZero();
+        Ctx.Animator.DisableMoveAnimation();
     }
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        if (Ctx.Action.Input.IsDashPressed && Ctx.DashStateEnabled)
+        if (Ctx.Input.IsDashPressed && Ctx.DashStateEnabled)
         {
             SwitchState(Factory.Dash());
         }
-        if (Ctx.Action.Input.IsShootPressed)
+        if (Ctx.Input.IsShootPressed)
         {
             SwitchState(Factory.Shoot());
         }
-        if (Ctx.Action.Input.IsSpecialPressed)
+        if (Ctx.Input.IsSpecialPressed)
         {
             SwitchState(Factory.Special());
         }
-        else if (!Ctx.Action.Input.IsMovePressed){
+        else if (!Ctx.Input.IsMovePressed){
             SwitchState(Factory.Idle());
         }   
-    }   
+    } 
+
+    private void Move(){
+        Ctx.PlayerRb.velocity = Ctx.Input.MovementInputValue.normalized  * Ctx.Stat.Speed.Value  * Time.deltaTime;
+    }  
+
+    private void SetVelocityZero()
+    {
+        Ctx.PlayerRb.velocity = Vector2.zero;
+    }
 }

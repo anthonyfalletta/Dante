@@ -19,13 +19,21 @@ public class PlayerAttackState : PlayerBaseState
     }
 
     public override void FixedUpdateState(){
-        Ctx.Action.Attack();
+        Attack();
     }
     public override void ExitState(){}
     public override void InitializeSubState(){}
     public override void CheckSwitchStates(){
-        if (!Ctx.Action.Input.IsAttackPressed){
+        if (!Ctx.Input.IsAttackPressed){
             SwitchState(Factory.Idle());
         }
+    }
+    
+    public void Attack()
+    {
+        float angle = Mathf.Atan2(Ctx.Input.MovementInputValue.normalized.y,Ctx.Input.MovementInputValue.normalized.x) * Mathf.Rad2Deg;
+        Quaternion attackRotation = Quaternion.Euler(new Vector3(0,0,angle));
+        Vector3 attackPosition = Ctx.Obj.PlayerGO.transform.position + (new Vector3(Ctx.Input.MovementInputValue.x,Ctx.Input.MovementInputValue.y,0).normalized * 0.1f);
+        Ctx.AttackCo(attackPosition, attackRotation);
     }
 }

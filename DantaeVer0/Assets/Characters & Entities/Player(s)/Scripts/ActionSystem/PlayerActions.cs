@@ -4,26 +4,17 @@ using UnityEngine;
 
 public class PlayerActions : MonoBehaviour
 {
-    PlayerStateMachine _ctx;
-    PlayerStat _stat;
-    PlayerInputController _input;
-    PlayerObject _obj;
-    PlayerAnimationController _animator;
-
-    public PlayerStateMachine Ctx {get{return _ctx;} set{_ctx = value;}}
-    public PlayerStat Stat {get{return _stat;} set{_stat = value;}}
-    public PlayerInputController Input {get{return _input;} set{_input = value;}}
-    public PlayerObject Obj {get{return _obj;} set{_obj = value;}}
-    public PlayerAnimationController Animator {get{return _animator;} set{_animator = value;}}
+    
 
     public bool isMoving = false;
+    public bool isZero = false;
+    public bool isDashing = false;
+
+    public Vector2 inputValue;
+    public Vector2 inputValueNormalized;
 
     private void Awake() {
-        _ctx = this.GetComponent<PlayerStateMachine>();
-        _stat = this.GetComponent<PlayerStat>();
-        _input = this.GetComponent<PlayerInputController>();
-        _obj = this.GetComponent<PlayerObject>();
-        _animator = this.GetComponent<PlayerAnimationController>();
+        
     }
     
     void Start()
@@ -33,15 +24,27 @@ public class PlayerActions : MonoBehaviour
 
     void Update()
     {
+        //inputValue = Input.MovementInputValue;
+        //inputValueNormalized = Input.MovementInputValue.normalized;
+        //SetVelocityZero();
+        //MoveLogic();
+    }
+
+    /*
+
+    void FixedUpdate(){
+        
         
     }
 
-    void FixedUpdate(){
-        MoveLogic();
+    public void SetVelocityZero(){
+        isZero=true;
     }
 
-    public void SetVelocityZero(){
+    public void SetVelocityZeroLogic(){
         isMoving = false;
+        Obj.PlayerRb.velocity = Vector2.zero;
+        isZero = false;
     }
 
     public void Move(){
@@ -51,10 +54,12 @@ public class PlayerActions : MonoBehaviour
     public void MoveLogic()
     {
         if (isMoving){
-            Obj.PlayerRb.velocity = Input.MovementInputValue.normalized * Stat.Speed.Value * Time.deltaTime;
-        }else{
-            Obj.PlayerRb.velocity = Vector2.zero;
+            Obj.PlayerRb.velocity = Input.MovementInputValue.normalized  * Stat.Speed.Value * 0.5f * Time.deltaTime;
         }
+    }
+
+    public void DashLogic(){
+
     }
 
     public void DashReset(){
@@ -119,4 +124,5 @@ public class PlayerActions : MonoBehaviour
         Vector3 playerPos = Obj.PlayerGO.transform.position + (new Vector3(-Input.LastMovementInputValue.x,-Input.LastMovementInputValue.y,0).normalized * 0.1f);
         Instantiate(Obj.ProjectilePrefab, playerPos, playerRot);
     } 
+    */
 }
