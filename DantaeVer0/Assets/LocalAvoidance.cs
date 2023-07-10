@@ -8,15 +8,17 @@ public class LocalAvoidance : MonoBehaviour
     private Collider2D coll;
     private RaycastHit2D[] collisionResults;
     private GameObject enemy;
-    Vector3 location;
+    Vector3 debugLocation;
     float distance = 2.0f;
     int[] multiAngles = {0,15,-15,30,-30,45,-45,60,-60,75,-75,90,-90};
     Vector3[] vectorAngle = new Vector3[13];
     ContactFilter2D filter;
 
     Vector3 lastPos;
-    //Vector3 moveVec;
-
+    Vector3 debugMoveVec;
+    float debugAngle;
+    //Vector3 movementDirection;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -37,10 +39,16 @@ public class LocalAvoidance : MonoBehaviour
     void Update()
     {
         //CheckCollisionAhead(coll, Vector2.up, distance);
-        CheckMultipleCollisionsAhead();
-        //Boxcasting();
-        CalculateMovementDirection();
+
         
+        Vector3 movementDirection;
+        float movementAngle;
+        CalculateMovementDirection(out movementDirection, out movementAngle);
+        Debug.Log("Movement Vector: " + movementDirection);
+        Debug.Log("Movement Vector Angle: " + movementAngle);
+        debugMoveVec = movementDirection;
+        //CheckCollisionAhead(coll, movementDirection, distance);
+        CheckMultipleCollisionsAhead(movementDirection);
     }
 
     private bool Boxcasting(){
@@ -65,35 +73,35 @@ public class LocalAvoidance : MonoBehaviour
         
     }
 
-    private void CalculateMovementDirection(){
-        Vector3 moveVec = (gameObject.transform.position-lastPos).normalized; 
+    private void CalculateMovementDirection(out Vector3 movementDirection, out float movementAngle){
+        movementDirection = (gameObject.transform.position-lastPos).normalized; 
         Debug.Log("GameObject Vector: " + gameObject.transform.position);
         Debug.Log("Last Pos Vector: " + lastPos);
-        Debug.Log("Movement Vector: " + moveVec);
-        float angle = Vector2.Angle(Vector2.up, moveVec);
-        Vector3 cross = Vector3.Cross(Vector2.up,moveVec);
+        movementAngle = Vector2.Angle(Vector2.up, movementDirection);
+        Vector3 cross = Vector3.Cross(Vector2.up,movementDirection);
         //Debug.Log(cross);
-        if (cross.z < 0) angle = -angle;
-        Debug.Log("Movement Vector Angle: " + angle);
+        if (cross.z < 0) movementAngle = -movementAngle;
+        
 
         lastPos = gameObject.transform.position;
 
         //return (moveVec, angle);
     }
 
-    private bool CheckMultipleCollisionsAhead(){
+    private bool CheckMultipleCollisionsAhead(Vector3 movementVector){
         for (int i=0; i<multiAngles.Length; i++){
-            //Do not need to have movement vector and angle change calculated as gameobject object always oriented with Vector.up
-
-            float radAngle = multiAngles[i] * Mathf.Deg2Rad;
-            Vector3 direction = new Vector3(Mathf.Sin(radAngle), Mathf.Cos(radAngle), 0);
-            //Vector3 vectorAngleCheckDistance = new Vector3(gameObject.transform.position.x+distance*Mathf.Sin(radAngle), gameObject.transform.position.y+distance*Mathf.Cos(radAngle),gameObject.transform.position.z);
-            if (CheckCollisionAhead(coll, direction, distance)==false)
+            //Need to have movement vector and angle change calculated instead of gameobject object oriented with Vector.up
+            //float radAngle = multiAngles[i] * Mathf.Deg2Rad;
+             //Vector3 direction = new Vector3(movementVector.x+Mathf.Sin(radAngle), movementVector.y+Mathf.Cos(radAngle),movementVector.z);
+            
+            var rotatedVector = Quaternion.AngleAxis(multiAngles[i],Vector3.forward)*movementVector
+            ;
+            if (CheckCollisionAhead(coll, rotatedVector, distance)==false)
             {
                 Debug.Log("No hits for angle: " + multiAngles[i]);
-                Debug.DrawLine(gameObject.transform.position, location, Color.green);
-                    float rad = Mathf.Deg2Rad*multiAngles[i];
-                    location = new Vector3(gameObject.transform.position.x+distance*Mathf.Sin(rad), gameObject.transform.position.y+distance*Mathf.Cos(rad),gameObject.transform.position.z);
+                Debug.DrawLine(gameObject.transform.position, debugLocation, Color.green);
+                    //float rad = Mathf.Deg2Rad*multiAngles[i];
+                    //location = new Vector3(gameObject.transform.position.x+distance*Mathf.Sin(rad), gameObject.transform.position.y+distance*Mathf.Cos(rad),gameObject.transform.position.z);
 
                     //Steer towards no collision angle
                     //Check if movement vector going towards collision and change if so
@@ -114,16 +122,17 @@ public class LocalAvoidance : MonoBehaviour
             filter.SetLayerMask(LayerMask.GetMask("Unwalkable", "Enemy"));
             filter.useLayerMask = true;
             
-            //Calculating gizmo location for cast collision
-            //Using trig to check between org pos and changing pos to get movement Vector and then calculate collision box from there
+           //////////////////* Values for Visual Debugging *///////////////////////////
             float angle = Vector2.Angle(Vector2.up, direction);
             Vector3 cross = Vector3.Cross(Vector3.up,direction);
-            //Debug.Log(cross);
-            if (cross.z < 0) angle = -angle;
-
+                //Debug.Log(cross);
+            if (cross.z > 0) angle = -angle;
                 //Debug.Log("Angle: " + angle);
-                float rad = Mathf.Deg2Rad*angle;
-            //location = new Vector3(gameObject.transform.position.x+distance*Mathf.Sin(rad), gameObject.transform.position.y+distance*Mathf.Cos(rad),gameObject.transform.position.z);
+
+            float rad = Mathf.Deg2Rad*angle;
+            debugLocation = new Vector3(gameObject.transform.position.x+distance*Mathf.Sin(rad), gameObject.transform.position.y+distance*Mathf.Cos(rad),gameObject.transform.position.z);
+            //*************************************************************************/
+
 
             int numHits = movableCollider.Cast(direction, filter, hits, distance);
             for (int i=0; i < numHits; i++)
@@ -139,23 +148,30 @@ public class LocalAvoidance : MonoBehaviour
     }
 
     private void OnDrawGizmos() {
-       // var q = Quaternion.AngleAxis(90, Vector3.forward);
-       
-
-        
+      
         if (gameObject != null && coll != null)
         {
             //Draw multiple rays of angle check
         for (int i=0; i<multiAngles.Length; i++){
-            float radAngle = multiAngles[i] * Mathf.Deg2Rad;
-            Vector3 rayPoint = new Vector3(gameObject.transform.position.x+distance*Mathf.Sin(radAngle), gameObject.transform.position.y+distance*Mathf.Cos(radAngle),gameObject.transform.position.z);
-            
-            Gizmos.DrawLine(enemy.transform.position, rayPoint);
+            /*
+            float radAngle1 = multiAngles[i] * Mathf.Deg2Rad;
+            float radAngle2 = Vector2.Angle(Vector2.up, debugMoveVec);
+
+            Vector3 direction = new Vector3(debugMoveVec.x+Mathf.Sin(radAngle), debugMoveVec.y+Mathf.Cos(radAngle),debugMoveVec.z);
+            float angle = Vector2.Angle(Vector2.up, direction);
+            Vector3 cross = Vector3.Cross(Vector3.up,direction);
+                //Debug.Log(cross);
+            if (cross.z > 0) angle = -angle;
+                //Debug.Log("Angle: " + angle);
+
+            float rad = Mathf.Deg2Rad*angle;
+            Vector3 debugDirection = new Vector3(gameObject.transform.position.x+distance*Mathf.Sin(rad), gameObject.transform.position.y+distance*Mathf.Cos(rad),gameObject.transform.position.z);
+        */
+        //Debug.DrawLine(gameObject.transform.position, , Color.white);
         }
-        
 
         //Draw current collision check
-        Gizmos.DrawWireCube(location, coll.bounds.size);
+        Gizmos.DrawWireCube(debugLocation, coll.bounds.size);
         }
     }
 }
