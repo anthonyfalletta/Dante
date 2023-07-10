@@ -45,11 +45,11 @@ public class BasicTestMovement : MonoBehaviour
     private void Update() {
         if (input.IsMovePressed)
         {
-            Debug.Log("Moving");
+            //Debug.Log("Moving");
             bMove = true;
         }
         else{
-            Debug.Log("Fixed");
+            //Debug.Log("Fixed");
             bMove = false;
         }
       

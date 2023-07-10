@@ -40,7 +40,7 @@ public class EnemyActions : MonoBehaviour
     }
 
     public void StartActivation(){
-        Debug.Log("They are linked");
+        //Debug.Log("They are linked");
 
     
         wanderStartPoint = this.gameObject.transform.position;
@@ -96,7 +96,7 @@ public class EnemyActions : MonoBehaviour
     }
 
     public void Follow(){
-        Debug.Log("Follow Player");
+        //Debug.Log("Follow Player");
         //EnemyPahtfinding.SetTarget(_player.transform.position, Stat.Speed.Value);
         
     }

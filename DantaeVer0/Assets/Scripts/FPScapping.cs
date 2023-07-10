@@ -16,7 +16,7 @@ public class FPScapping : MonoBehaviour
 
     void CapFPS(){
       #if UNITY_EDITOR
-      Debug.Log("Capping FPS");
+      //Debug.Log("Capping FPS");
       QualitySettings.vSyncCount = vSync;
       Application.targetFrameRate = fps;
       #endif
