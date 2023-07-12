@@ -398,7 +398,17 @@ namespace Pathfinding {
 
 			// Set how much the agent wants to move during this frame
 			var delta2D = lastDeltaPosition = CalculateDeltaToMoveThisFrame(movementPlane.ToPlane(currentPosition), distanceToEnd, deltaTime);
-			nextPosition = currentPosition + movementPlane.ToWorld(delta2D, verticalVelocity * lastDeltaTime);
+			//! Adding offset position to mix to move towards local avoidance desire direction
+			var r = movementPlane.ToWorld(delta2D, verticalVelocity * lastDeltaTime);
+			if (Input.GetKeyDown("space")){
+				nextPosition = currentPosition + movementPlane.ToWorld(delta2D, verticalVelocity * lastDeltaTime) + new Vector3(0.07f, 0.07f, 0f);
+			}
+			else{
+				nextPosition = currentPosition + movementPlane.ToWorld(delta2D, verticalVelocity * lastDeltaTime);
+			}
+			//For Unity Vector debug precision pass to .ToString funciton and specify (F) Fixed-point to 4 decimals
+			Debug.Log(r.ToString("F4"));
+			//nextPosition = currentPosition + new Vector3(0.1f,0.1f,0);
 			CalculateNextRotation(slowdown, out nextRotation);
 		}
 
